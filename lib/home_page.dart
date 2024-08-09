@@ -1,75 +1,13 @@
-// import 'package:counter/counter/home_page.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:counter/counter/num_count_model.dart';
-// import 'package:counter/counter_history/history_model.dart';
-// import 'package:counter/counter_history/history_model_month.dart';
-// import 'package:counter/task_list/task_model.dart';
-// import 'package:counter/ui/pageview.dart';
-// import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import '../user/signin.dart';
-
 import 'dart:convert';
-import 'package:myapp/settings/api.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/settings/eleki_api.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'settings/firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:myapp/settings/api.dart';
+import 'settings/eleki_api.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({required Key key}) : super(key: key);
-  // const MyApp({super.key});
-
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
   @override
-  Widget build(BuildContext context) {
-    // final uid = FirebaseAuth.instance.currentUser!.uid;
-    // final docRefUser = FirebaseFirestore.instance.collection('users').doc(uid);
-    // final userInfo = await docRefUser.get();
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<TaskModel>(create: (_) => TaskModel()
-            // ..getTodoListRealtime(),
-            // ..getUserGraph(),
-            ),
-        // ChangeNotifierProvider<EditTaskModel>(create: (_) => EditTaskModel()),
-        ChangeNotifierProvider<NumCountModel>(create: (_) => NumCountModel()),
-        ChangeNotifierProvider<HistoryModel>(create: (_) => HistoryModel()),
-        ChangeNotifierProvider<MonthlyHistoryModel>(
-            create: (_) => MonthlyHistoryModel()),
-        // ChangeNotifierProvider<TaskMonsterModel>(
-        //     create: (_) => TaskMonsterModel()),
-      ],
-      child: MaterialApp(
-        title: 'Flutter app',
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // スプラッシュ画面などに書き換えても良い
-              return const SizedBox();
-            }
-            if (snapshot.hasData) {
-              // 1.User が null でなないこと確認 →ホームへ
-              return const PageViewClass(key: ValueKey('pageView'));
-            }
-            //widget→変わらないものとして定義したいところ＝const
-
-            // User が null である、つまり未サインインのサインイン画面へ
-            return const SigninPage();
-          },
-        ),
-      ),
-    );
-  } //まてりある
-}
-
-
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-  @override
-  MainPageState createState() => MainPageState();
+  HomePageState createState() => HomePageState();
 }
 
 class MonthlyBookCount {
@@ -78,7 +16,7 @@ class MonthlyBookCount {
   final int monthlyYumeko;
 }
 
-class MainPageState extends State<MainPage> {
+class HomePageState extends State<HomePage> {
   int harukaCounter = 0;
   int yumekoCounter = 0;
   int totalHaruka = 0;
@@ -188,4 +126,3 @@ class MainPageState extends State<MainPage> {
     );
   }
 }
-
