@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "613706397793",
+    "project_id": "haruehon-c8837",
+    "storage_bucket": "haruehon-c8837.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613706397793:android:d9e04ef04366b153d35220",
+        "android_client_info": {
+          "package_name": "com.haruyumeehon.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613706397793-tjtqo2nl45bh2smmoeaflun06jf554nk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3pRb0jR-67DfIwM_obAlhPSGt7vjGHuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613706397793-tjtqo2nl45bh2smmoeaflun06jf554nk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "613706397793-cvlj98mehc47hkdj36uu35n6bqvqvdpo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yoichiyy.herbooks"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613706397793:android:e0ea0d212e37ed16d35220",
+        "android_client_info": {
+          "package_name": "com.yoichiyy.herbooks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613706397793-tjtqo2nl45bh2smmoeaflun06jf554nk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3pRb0jR-67DfIwM_obAlhPSGt7vjGHuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613706397793-tjtqo2nl45bh2smmoeaflun06jf554nk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "613706397793-cvlj98mehc47hkdj36uu35n6bqvqvdpo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yoichiyy.herbooks"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
