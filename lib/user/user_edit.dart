@@ -29,11 +29,10 @@ class _UserEditState extends State<UserEdit> {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            Navigator.pushReplacement<MaterialPageRoute, HomePage>(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      const HomePage(),
+                  builder: (context) => const HomePage(),
                 ));
           },
         ),
@@ -47,8 +46,11 @@ class _UserEditState extends State<UserEdit> {
               child: const Text('保存', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 User? user = FirebaseAuth.instance.currentUser;
+                if (user == null) {
+                  return;
+                }
                 Map<String, dynamic> insertObj = <String, dynamic>{
-                  'id': user!.uid,
+                  'id': user.uid,
                   'name': _textContName.text,
                   'note': _textContProf.text,
                   'intelligence': 0,
@@ -58,11 +60,6 @@ class _UserEditState extends State<UserEdit> {
                   'patience': 0,
                   'thanks': 0,
                 };
-                //firebaseauth、ユーザーの情報を司っている。メアド（＝＞ユニーク）とパスワードとか。方法いろいろ提供してる。
-                //ユーザー情報が毎回setされるということか？UPdateはされない？したければ、SETではなくUPDATEにすればよいだけだろう。
-                //もしもset二回目やったら、新しいユーザーとして塗り替えられて、前のユーザー情報からは「切り離される」という仕組みだろうか？
-                //ユーザーが保有しているポイントを、新しく更新をかけた場合に引き継ぐためには、ユーザー情報を取得して…」という一連のコードをかけば、それでOKかな？
-                //コードを書いて実際試せば良い話ではあるが、特に【ユーザー情報とFIREBASE】の仕組みについて、そういうものなのだと、教えていただけると1分で完了案件
                 try {
                   var doc = FirebaseFirestore.instance
                       .collection('users')
@@ -74,8 +71,7 @@ class _UserEditState extends State<UserEdit> {
                   await Navigator.push<MaterialPageRoute>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const HomePage(),
+                      builder: (context) => const HomePage(),
                     ),
                   );
                 } catch (e) {
