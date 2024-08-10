@@ -33,7 +33,7 @@ class _UserEditState extends State<UserEdit> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const HomePage(key: ValueKey('pageView')),
+                      const HomePage(),
                 ));
           },
         ),
@@ -79,8 +79,7 @@ class _UserEditState extends State<UserEdit> {
                     ),
                   );
                 } catch (e) {
-                  debugPrint('-----insert error----');
-                  print(e);
+                  debugPrint(e.toString());
                 }
               },
             ),

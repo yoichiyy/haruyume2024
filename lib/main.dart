@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
           },
         ),
       );
-    // );//multiProvider
   } //まてりある
 }
 
