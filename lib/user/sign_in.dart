@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/user/user_edit.dart';
+import 'package:myapp/user/user_register.dart';
 
 class SignInPage extends StatefulWidget {
   // const LoginPage({Key? key}) : super(key: key);
@@ -72,9 +72,9 @@ class SignInPageState extends State<SignInPage> {
                       // ユーザー登録に成功した場合
                       // メイン画面に遷移＋ログイン画面を破棄
                       await Navigator.of(context)
-                          .pushReplacement<MaterialPageRoute, UserEdit>(
+                          .pushReplacement<MaterialPageRoute, UserRegister>(
                         MaterialPageRoute(builder: (context) {
-                          return const UserEdit();
+                          return const UserRegister();
                         }),
                       );
                     } catch (e) {
