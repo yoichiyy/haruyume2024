@@ -43,7 +43,16 @@ class SignInPageState extends State<SignInPage> {
               // パスワード入力
               TextFormField(
                 decoration: const InputDecoration(labelText: 'パスワード'),
-                obscureText: true,
+                obscureText: false,
+                onChanged: (String value) {
+                  setState(() {
+                    password = value;
+                  });
+                },
+              ),
+              TextFormField(//ユーザーID
+                decoration: const InputDecoration(labelText: 'ニックネーム'),
+                obscureText: false,
                 onChanged: (String value) {
                   setState(() {
                     password = value;
@@ -59,32 +68,31 @@ class SignInPageState extends State<SignInPage> {
                 width: double.infinity,
                 // ユーザー登録ボタン
                 child: ElevatedButton(
-                  child: const Text('ユーザー登録'),
-                  onPressed: () async {
-                    try {
+                    child: const Text('ユーザー登録'),
+                    onPressed: () {
                       // メール/パスワードでユーザー登録
                       final FirebaseAuth auth = FirebaseAuth.instance;
-                      await auth.createUserWithEmailAndPassword(
+
+                      
+                      auth
+                          .createUserWithEmailAndPassword(
                         email: email,
                         password: password,
-                      );
-
-                      // ユーザー登録に成功した場合
-                      // メイン画面に遷移＋ログイン画面を破棄
-                      await Navigator.of(context)
-                          .pushReplacement<MaterialPageRoute, UserRegister>(
-                        MaterialPageRoute(builder: (context) {
-                          return const UserRegister();
-                        }),
-                      );
-                    } catch (e) {
-                      // ユーザー登録に失敗した場合
-                      setState(() {
-                        infoText = "登録に失敗しました：${e.toString()}";
+                      )
+                          .then((userCredential) {
+                        // ユーザー登録に成功した場合、メイン画面に遷移＋ログイン画面を破棄
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) {
+                            return const UserRegister();
+                          }),
+                        );
+                      }).catchError((e) {
+                        // エラーハンドリング
+                        setState(() {
+                          infoText = "登録に失敗しました：${e.toString()}";
+                        });
                       });
-                    }
-                  },
-                ),
+                    }),
               )
             ],
           ),

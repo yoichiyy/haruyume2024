@@ -22,6 +22,7 @@ class _UserRegisterState extends State<UserRegister> {
   }
 
   Future<void> _initializeUserData() async {
+    debugPrint('Start _initializeUserData');
     try {
       // ユーザー情報を非同期で取得
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -30,12 +31,14 @@ class _UserRegisterState extends State<UserRegister> {
           _errorMessage = 'UIDが取得できませんでした。';
           _isLoading = false; // エラー時もロード終了とする
         });
+        debugPrint('UID is null, setting errorMessage');
         return;
       }
 
       setState(() {
         _errorMessage = null;
       });
+      debugPrint('User data initialized successfully');
     } catch (e) {
       setState(() {
         _errorMessage = 'ユーザーデータの取得に失敗しました: $e';
@@ -45,6 +48,7 @@ class _UserRegisterState extends State<UserRegister> {
       setState(() {
         _isLoading = false;
       });
+      debugPrint('End _initializeUserData');
     }
   }
 
@@ -53,12 +57,15 @@ class _UserRegisterState extends State<UserRegister> {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
 
     if (_isLoading) {
+      debugPrint(
+          'Loading state is true, showing CircularProgressIndicator'); 
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_errorMessage != null) {
+      debugPrint('Error state detected: $_errorMessage');
       return Scaffold(
         body: Center(child: Text(_errorMessage!)),
       );
@@ -69,6 +76,7 @@ class _UserRegisterState extends State<UserRegister> {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
+            debugPrint('Close button pressed, navigating to HomePage');
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -85,6 +93,7 @@ class _UserRegisterState extends State<UserRegister> {
             child: OutlinedButton(
               child: const Text('保存', style: TextStyle(color: Colors.white)),
               onPressed: () async {
+                debugPrint('Save button pressed');
                 User? user = FirebaseAuth.instance.currentUser;
                 Map<String, dynamic> insertObj = <String, dynamic>{
                   'id': user!.uid,
@@ -143,7 +152,7 @@ class _UserRegisterState extends State<UserRegister> {
                       ),
                       Flexible(
                         child: TextField(
-                          autofocus: false,
+                          autofocus: true,
                           controller: _textContName,
                           maxLines: 1,
                           decoration: const InputDecoration(

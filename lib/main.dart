@@ -1,9 +1,9 @@
+import 'package:myapp/user/sign_and_register.dart';
 import 'home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'settings/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'user/sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
               return const HomePage();
             }
             // User が null である、つまり未サインインのサインイン画面へ
-            return const SignInPage();
+            return const SignInRegisterPage();
           },
         ),
       );

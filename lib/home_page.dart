@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:myapp/settings/api.dart';
 import 'settings/eleki_api.dart';
 
@@ -12,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class MonthlyBookCount {
   MonthlyBookCount({required this.monthlyHaruka, required this.monthlyYumeko});
-  final int monthlyHaruka;                
+  final int monthlyHaruka;
   final int monthlyYumeko;
 }
 
@@ -38,8 +39,7 @@ class HomePageState extends State<HomePage> {
 //スプレッドシートからデータを取得
   static Future<MonthlyBookCount> _fetchInitialData() async {
     try {
-      final url =
-          GoogleApiSettings.getGoogleSheet();
+      final url = GoogleApiSettings.getGoogleSheet();
       final res = await http.get(Uri.parse(url));
       if (res.statusCode != 200) {
         throw ('データ取得失敗');
@@ -53,7 +53,10 @@ class HomePageState extends State<HomePage> {
       // debugPrint(cellValues.toString());
       // B3とC3セルの値を取得
       final List<dynamic> row3 = cellValues['values'][2];
-      debugPrint(row3.toString());
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      debugPrint('${row3.toString()}表示されたらあかんやつ');
+      debugPrint('${uid.toString()}UID');
 
       if (row3.length >= 2) {
         final monthlyHaruka = int.tryParse(row3[1].toString()) ?? 0;
@@ -68,7 +71,6 @@ class HomePageState extends State<HomePage> {
       return MonthlyBookCount(monthlyHaruka: 0, monthlyYumeko: 0); // デフォルト値を返す
     }
   } //fetchInitData
-
 
   void _incrementHaruka() {
     setState(() {
@@ -118,7 +120,7 @@ class HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: () {
               APIS.addToSheet(harukaCounter, yumekoCounter);
-            },            
+            },
             child: const Text('送信'),
           ),
         ],
