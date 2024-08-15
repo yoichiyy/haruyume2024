@@ -12,13 +12,15 @@ class APIS {
 
     //WEBデプロイしたURL
     String url =
-        "https://script.google.com/macros/s/AKfycbwQ6zYYfdiOR3-sqVeIQYp1q3VZSpU3YtTxETB7QS4ELOpLB4vj4IRpC7200c9kqrs/exec";
+        // "https://script.google.com/macros/s/AKfycbwQ6zYYfdiOR3-sqVeIQYp1q3VZSpU3YtTxETB7QS4ELOpLB4vj4IRpC7200c9kqrs/exec";
+        "https://script.google.com/macros/s/AKfycby5FiSmh6i0YBI1zN1JguPvD6sJb76vIcZGqGTPv_BZh0awvQR0wQoMXv3pxiaFew/exec";
+    // String? user; // tryブロックの外でuserを定義
 
     try {
       debugPrint("start submitting the form");
       final body = jsonEncode({
         'amount': harukaCounter,
-        'category': harukaCounter,
+        'category': "book",
         'date': dateString,
         'note': yumekoCounter,
         'user': user,
