@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +25,7 @@ class HomePageState extends State<HomePage> {
   int totalYumeko = 0;
   int monthlyHaruka = 0;
   int monthlyYumeko = 0;
+  String? userName = "";
 
   @override
   void initState() {
@@ -34,6 +36,18 @@ class HomePageState extends State<HomePage> {
         monthlyYumeko = initialData.monthlyYumeko;
       });
     });
+    _fetchUserName(); // 追加: ユーザー名を取得する関数の呼び出し
+  }
+
+  Future<void> _fetchUserName() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      setState(() {
+        userName = userDoc['name'];
+      });
+    }
   }
 
 //スプレッドシートからデータを取得
@@ -53,10 +67,9 @@ class HomePageState extends State<HomePage> {
       // debugPrint(cellValues.toString());
       // B3とC3セルの値を取得
       final List<dynamic> row3 = cellValues['values'][2];
-      final uid = FirebaseAuth.instance.currentUser?.uid;
-
-      debugPrint('${row3.toString()}表示されたらあかんやつ');
-      debugPrint('${uid.toString()}UID');
+      // final uid = FirebaseAuth.instance.currentUser?.uid;
+      // debugPrint('${row3.toString()}表示されたらあかんやつ');
+      // debugPrint('${uid.toString()}UID');
 
       if (row3.length >= 2) {
         final monthlyHaruka = int.tryParse(row3[1].toString()) ?? 0;
@@ -92,6 +105,7 @@ class HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+          if (userName != null) Text('こんにちは、$userName さん'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -119,7 +133,7 @@ class HomePageState extends State<HomePage> {
           ),
           ElevatedButton(
             onPressed: () {
-              APIS.addToSheet(harukaCounter, yumekoCounter);
+              APIS.addToSheet(harukaCounter, yumekoCounter,userName);
             },
             child: const Text('送信'),
           ),

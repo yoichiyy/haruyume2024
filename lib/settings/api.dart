@@ -1,38 +1,18 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/settings/japanese_weekdays.dart';
 
 class APIS {
-  static Future<void> addToSheet(int harukaCounter, int yumekoCounter) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
+  static Future<void> addToSheet(
+      int harukaCounter, int yumekoCounter, user) async {
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
-
-    if (uid == null) {
-      debugPrint('Error: uid is null');
-      return;
-    }
-
-    try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final user = snapshot.data()?['name'] as String?;
-      if (user == null) {
-        debugPrint('Error: user is null');
-        return;
-      }
-    } catch (e) {
-      debugPrint('Firestore error: $e');
-    }
 
     //WEBデプロイしたURL
     String url =
         "https://script.google.com/macros/s/AKfycbwQ6zYYfdiOR3-sqVeIQYp1q3VZSpU3YtTxETB7QS4ELOpLB4vj4IRpC7200c9kqrs/exec";
-    String? user; // tryブロックの外でuserを定義
 
     try {
       debugPrint("start submitting the form");
@@ -43,25 +23,31 @@ class APIS {
         'note': yumekoCounter,
         'user': user,
       });
-      debugPrint("Json Succeeded:$body");
+      debugPrint("Json Succeeded: $body");
 
-      //結果はどうだったか、サーバーから返されるresponseを取得
       http.Response response = await http.post(
         Uri.parse(url),
         body: body,
         headers: <String, String>{
-          //リクエストに関するメタ情報
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
       );
-      Map<String, dynamic> responseJson = jsonDecode(response.body);
-      debugPrint(responseJson[
-          'status']); // This will output the "status" field of the response.
 
-      debugPrint(response.body);
+      // ここでのエラーハンドリング
+      debugPrint('HTTP Status Code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseJson = jsonDecode(response.body);
+        debugPrint('Response Status: ${responseJson['status']}');
+      } else {
+        debugPrint('Error: ${response.statusCode} - ${response.reasonPhrase}');
+        debugPrint('Response body: ${response.body}');
+      }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Request failed: $e');
+      // ここでブレークポイントを設定してみる
+      rethrow; // 必要に応じて例外を再スローする
     }
   }
 }
