@@ -14,7 +14,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
   String infoText = '';
   String email = '';
   String password = '';
-  String nickname = ''; // ユーザーID（ニックネーム）の入力を追加
+  String nickname = '';
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
-                decoration: const InputDecoration(labelText: 'メールアドレス'),
+                decoration: const InputDecoration(labelText: 'address'),
                 onChanged: (String value) {
                   setState(() {
                     email = value;
@@ -34,7 +34,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'パスワード'),
+                decoration: const InputDecoration(labelText: 'password'),
                 onChanged: (String value) {
                   setState(() {
                     password = value;
@@ -42,7 +42,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'ニックネーム'),
+                decoration: const InputDecoration(labelText: 'nickname'),
                 onChanged: (String value) {
                   setState(() {
                     nickname = value;
@@ -56,9 +56,8 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    child: const Text('ユーザー登録'),
+                    child: const Text('Register'),
                     onPressed: () {
-                      // メール/パスワードでユーザー登録
                       final FirebaseAuth auth = FirebaseAuth.instance;
                       auth
                           .createUserWithEmailAndPassword(
@@ -85,7 +84,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
                             'thanks': 0,
                           });
                         } else {
-                          throw Exception('ユーザーが取得できませんでした');
+                          throw Exception('could not get the user info');
                         }
                       }).then((_) {
                         // Firestoreへの保存が成功した場合に、次の画面に遷移
@@ -100,7 +99,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
                         // エラーハンドリング
                         if (mounted) {
                           setState(() {
-                            infoText = "登録に失敗しました：${e.toString()}";
+                            infoText = "register failed${e.toString()}";
                           });
                         }
                       });
