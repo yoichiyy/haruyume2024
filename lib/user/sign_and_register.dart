@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/home_page.dart';
+import 'package:myapp/user/sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInRegisterPage extends StatefulWidget {
@@ -20,6 +21,25 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              // SignInPageに遷移する
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SignInPage()),
+              );
+            },
+            child: const Text(
+              'LOG IN',
+              style: TextStyle(
+                color: Colors.white, // ログインテキストの色
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(24),
