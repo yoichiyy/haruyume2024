@@ -33,7 +33,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
             child: const Text(
               'LOG IN',
               style: TextStyle(
-                color: Colors.white, // ログインテキストの色
+                color: Colors.black, // ログインテキストの色
                 fontWeight: FontWeight.bold,
               ),
             ),
