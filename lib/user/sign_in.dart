@@ -1,26 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/user/user_register.dart';
+import 'package:myapp/home_page.dart';
 
 class SignInPage extends StatefulWidget {
-  // const LoginPage({Key? key}) : super(key: key);
-  const SignInPage({super.key}); //2.18以降
-
-  //静的解析における　ぜんぶのwidgetにつく。widを判定するためのIDをつけられるもの。
-  //このwidとか、探せる。
-  //「クラスもwidも、KEYが一緒だったら再描画しない」→最適化　→上級者
-  //reordable list view" → リスとたいるは同じだけど、KEYがあれば、何がどこに行ったか管理できる（上から◯番目、という情報だけだと、管理できぬ）
+  const SignInPage({super.key});
 
   @override
   SignInPageState createState() => SignInPageState();
 }
 
 class SignInPageState extends State<SignInPage> {
-  // メッセージ表示用
-  String infoText = '';
-  // 入力したメールアドレス・パスワード
   String email = '';
   String password = '';
+  String infoText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -31,28 +23,17 @@ class SignInPageState extends State<SignInPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // メールアドレス入力
               TextFormField(
-                decoration: const InputDecoration(labelText: 'メールアドレス'),
+                decoration: const InputDecoration(labelText: 'Email Address'),
                 onChanged: (String value) {
                   setState(() {
                     email = value;
                   });
                 },
               ),
-              // パスワード入力
               TextFormField(
-                decoration: const InputDecoration(labelText: 'パスワード'),
-                obscureText: false,
-                onChanged: (String value) {
-                  setState(() {
-                    password = value;
-                  });
-                },
-              ),
-              TextFormField(//ユーザーID
-                decoration: const InputDecoration(labelText: 'ニックネーム'),
-                obscureText: false,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,  // パスワードの入力を隠す
                 onChanged: (String value) {
                   setState(() {
                     password = value;
@@ -61,39 +42,39 @@ class SignInPageState extends State<SignInPage> {
               ),
               Container(
                 padding: const EdgeInsets.all(8),
-                // メッセージ表示
                 child: Text(infoText),
               ),
               SizedBox(
                 width: double.infinity,
-                // ユーザー登録ボタン
                 child: ElevatedButton(
-                    child: const Text('ユーザー登録'),
-                    onPressed: () {
-                      // メール/パスワードでユーザー登録
-                      final FirebaseAuth auth = FirebaseAuth.instance;
-
-                      
-                      auth
-                          .createUserWithEmailAndPassword(
-                        email: email,
-                        password: password,
-                      )
-                          .then((userCredential) {
-                        // ユーザー登録に成功した場合、メイン画面に遷移＋ログイン画面を破棄
+                  child: const Text('Sign In'),
+                  onPressed: () {
+                    final FirebaseAuth auth = FirebaseAuth.instance;
+                    auth
+                        .signInWithEmailAndPassword(
+                      email: email,
+                      password: password,
+                    )
+                        .then((userCredential) {
+                      // サインインが成功した場合に次の画面に遷移
+                      if (mounted) {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) {
-                            return const UserRegister();
+                            return const HomePage();
                           }),
                         );
-                      }).catchError((e) {
-                        // エラーハンドリング
+                      }
+                    }).catchError((e) {
+                      // エラーハンドリング
+                      if (mounted) {
                         setState(() {
-                          infoText = "登録に失敗しました：${e.toString()}";
+                          infoText = "Sign in failed: ${e.toString()}";
                         });
-                      });
-                    }),
-              )
+                      }
+                    });
+                  },
+                ),
+              ),
             ],
           ),
         ),

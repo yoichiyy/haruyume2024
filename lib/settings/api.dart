@@ -4,17 +4,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/settings/japanese_weekdays.dart';
 
+class GoogleApiSettings {
+  static const String spreadsSheetsUrl =
+      "1fMdeCbePbmxmJ_3rjz69g-ng1dOaoyuR9zZl6KugPy8";
+  static const String sheetName = "book";
+  static const String apiKey = "AIzaSyAnoJBdD1vfTUXImK3ap8DJNBQbaO5svR4";
+
+  static String getGoogleSheet() {
+    if (spreadsSheetsUrl.isEmpty || sheetName.isEmpty || apiKey.isEmpty) {
+      throw ('please set google api settings.');
+    }
+    return 'https://sheets.googleapis.com/v4/spreadsheets/$spreadsSheetsUrl/values/$sheetName?key=$apiKey';
+  }
+}
+
 class APIS {
-  static Future<void> addToSheet(
-      int harukaCounter, int yumekoCounter, user) async {
+  static Future<void> addBookToSheet(
+      int harukaCounter, int yumekoCounter, username) async {
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
 
-    //WEBデプロイしたURL
     String url =
-        // "https://script.google.com/macros/s/AKfycbwQ6zYYfdiOR3-sqVeIQYp1q3VZSpU3YtTxETB7QS4ELOpLB4vj4IRpC7200c9kqrs/exec";
         "https://script.google.com/macros/s/AKfycby5FiSmh6i0YBI1zN1JguPvD6sJb76vIcZGqGTPv_BZh0awvQR0wQoMXv3pxiaFew/exec";
-    // String? user; // tryブロックの外でuserを定義
 
     try {
       debugPrint("start submitting the form");
@@ -23,7 +34,7 @@ class APIS {
         'category': "book",
         'date': dateString,
         'note': yumekoCounter,
-        'user': user,
+        'user': username,
       });
       debugPrint("Json Succeeded: $body");
 
@@ -50,6 +61,45 @@ class APIS {
       debugPrint('Request failed: $e');
       // ここでブレークポイントを設定してみる
       rethrow; // 必要に応じて例外を再スローする
+    }
+  }
+
+  static Future<void> addKakeiboToSheet(
+      String amount, String category, String note, username) async {
+    final dateString =
+        "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
+
+    String url =
+        "https://script.google.com/macros/s/AKfycby5FiSmh6i0YBI1zN1JguPvD6sJb76vIcZGqGTPv_BZh0awvQR0wQoMXv3pxiaFew/exec";
+
+    try {
+      debugPrint("start submitting the form");
+      final body = jsonEncode({
+        'amount': amount,
+        'category': category,
+        'date': dateString,
+        'note': note,
+        'user': username,
+      });
+      debugPrint("Json Succeeded:$body");
+
+      //結果はどうだったか、サーバーから返されるresponseを取得
+      http.Response response = await http.post(
+        Uri.parse(url),
+        body: body,
+        headers: <String, String>{
+          //リクエストに関するメタ情報
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+      Map<String, dynamic> responseJson = jsonDecode(response.body);
+      debugPrint(responseJson[
+          'status']); // This will output the "status" field of the response.
+
+      debugPrint(response.body);
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 }

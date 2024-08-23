@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInRegisterPage extends StatefulWidget {
   const SignInRegisterPage({super.key});
@@ -26,7 +27,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
-                decoration: const InputDecoration(labelText: 'address'),
+                decoration: const InputDecoration(labelText: 'Email Address'),
                 onChanged: (String value) {
                   setState(() {
                     email = value;
@@ -34,7 +35,8 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'password'),
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
                 onChanged: (String value) {
                   setState(() {
                     password = value;
@@ -42,7 +44,7 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'nickname'),
+                decoration: const InputDecoration(labelText: 'Nickname'),
                 onChanged: (String value) {
                   setState(() {
                     nickname = value;
@@ -56,59 +58,67 @@ class SignInRegisterPageState extends State<SignInRegisterPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    child: const Text('Register'),
-                    onPressed: () {
-                      final FirebaseAuth auth = FirebaseAuth.instance;
-                      auth
-                          .createUserWithEmailAndPassword(
-                        email: email,
-                        password: password,
-                      )
-                          .then((userCredential) {
-                        // ユーザーID（ニックネーム）などの情報をFirestoreに保存
-                        final User? user = userCredential.user;
-                        if (user != null) {
-                          return FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user.uid)
-                              .set({
-                            'id': user.uid,
-                            'email': email,
-                            'name': nickname,
-                            'note': "",
-                            'intelligence': 0,
-                            'care': 0,
-                            'power': 0,
-                            'skill': 0,
-                            'patience': 0,
-                            'thanks': 0,
-                          });
-                        } else {
-                          throw Exception('could not get the user info');
-                        }
-                      }).then((_) {
-                        // Firestoreへの保存が成功した場合に、次の画面に遷移
-                        if (mounted) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) {
-                              return const HomePage();
-                            }),
-                          );
-                        }
-                      }).catchError((e) {
-                        // エラーハンドリング
-                        if (mounted) {
-                          setState(() {
-                            infoText = "register failed${e.toString()}";
-                          });
-                        }
-                      });
-                    }),
+                  child: const Text('Register'),
+                  onPressed: () {
+                    _registerUser();
+                  },
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _registerUser() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    try {
+      final UserCredential userCredential =
+          await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final User? user = userCredential.user;
+      if (user != null) {
+        // Firestoreにユーザー情報を保存
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'id': user.uid,
+          'email': email,
+          'name': nickname,
+          'note': "",
+          'intelligence': 0,
+          'care': 0,
+          'power': 0,
+          'skill': 0,
+          'patience': 0,
+          'thanks': 0,
+        });
+
+        // ログイン情報をSharedPreferencesに保存
+        await _saveLoginInfo(userCredential.user!.uid);
+
+        // ホーム画面に遷移
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      }
+    } catch (e) {
+      // エラーハンドリング
+      if (mounted) {
+        setState(() {
+          infoText = "Register failed: ${e.toString()}";
+        });
+      }
+    }
+  }
+
+  Future<void> _saveLoginInfo(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('auth_token', userId);
+    await prefs.setBool('is_logged_in', true);
   }
 }
