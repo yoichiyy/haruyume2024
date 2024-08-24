@@ -33,7 +33,7 @@ class SignInPageState extends State<SignInPage> {
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,  // パスワードの入力を隠す
+                obscureText: true, // パスワードの入力を隠す
                 onChanged: (String value) {
                   setState(() {
                     password = value;
