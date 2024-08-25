@@ -221,8 +221,32 @@ class HomePageState extends State<HomePage> {
                         width: 20,
                         height: 20,
                       ),
-                      Text('今月のトータル数字: $monthlyHaruka'),
-                      Text('カウンター: $harukaCounter'),
+                      Column(
+                        children: [
+                          Text.rich(
+                            TextSpan(
+                              text: '今月のトータル数字: ', // この部分はデフォルトのスタイルを適用
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '$monthlyHaruka', // この部分だけフォントサイズ20に変更
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text.rich(
+                            TextSpan(
+                              text: 'カウンター: ', // この部分はデフォルトのスタイルを適用
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '$harukaCounter', // この部分だけフォントサイズ20に変更
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                   Column(
@@ -277,8 +301,32 @@ class HomePageState extends State<HomePage> {
                         width: 20,
                         height: 20,
                       ),
-                      Text('今月のトータル数字: $monthlyYumeko'),
-                      Text('カウンター: $yumekoCounter'),
+                      Column(
+                        children: [
+                          Text.rich(
+                            TextSpan(
+                              text: '今月のトータル数字: ', // この部分はデフォルトのスタイルを適用
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '$monthlyYumeko', // この部分だけフォントサイズ20に変更
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text.rich(
+                            TextSpan(
+                              text: 'カウンター: ', // この部分はデフォルトのスタイルを適用
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '$yumekoCounter', // この部分だけフォントサイズ20に変更
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ],
