@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/home_page.dart';
+import 'package:haruyume_app/home_page.dart';
 
 class UserRegister extends StatefulWidget {
   const UserRegister({super.key});
@@ -57,8 +57,7 @@ class _UserRegisterState extends State<UserRegister> {
     final bottomSpace = MediaQuery.of(context).viewInsets.bottom;
 
     if (_isLoading) {
-      debugPrint(
-          'Loading state is true, showing CircularProgressIndicator'); 
+      debugPrint('Loading state is true, showing CircularProgressIndicator');
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );

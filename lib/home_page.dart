@@ -1,12 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:haruyume_app/home_card_kakei.dart';
+import 'package:haruyume_app/settings/api.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/home_card_kakei.dart';
-import 'package:myapp/settings/api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -85,6 +85,23 @@ class HomePageState extends State<HomePage> {
   int castId = 0;
   final List<int> checkedList = [];
 
+  //confetti
+  final _controllerHaru =
+      ConfettiController(duration: const Duration(milliseconds: 500));
+  final _controllerYume =
+      ConfettiController(duration: const Duration(milliseconds: 500));
+  void _confettiEventHaru() {
+    setState(() {
+      _controllerHaru.play();
+    });
+  }
+
+  void _confettiEventYume() {
+    setState(() {
+      _controllerYume.play();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,7 +112,6 @@ class HomePageState extends State<HomePage> {
       });
     });
   }
-
 
   //スプレッドシートからデータを取得
   static Future<MonthlyBookCount> _fetchInitialData() async {
@@ -123,12 +139,14 @@ class HomePageState extends State<HomePage> {
   void _incrementHaruka() {
     setState(() {
       harukaCounter++;
+      monthlyHaruka++;
     });
   }
 
   void _incrementYumeko() {
     setState(() {
       yumekoCounter++;
+      monthlyYumeko++;
     });
   }
 
@@ -154,9 +172,55 @@ class HomePageState extends State<HomePage> {
                 children: [
                   Column(
                     children: [
-                      ElevatedButton(
-                        onPressed: _incrementHaruka,
-                        child: const Text('はるか'),
+                      Row(
+                        //晴加ボタンとユニコーンちゃん
+                        children: [
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: Image.asset(
+                              'assets/yumekawa_animal_unicorn.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: FloatingActionButton(
+                              child: const Text("はるか"),
+                              onPressed: () {
+                                _incrementHaruka;
+                                HapticFeedback.mediumImpact();
+                                _confettiEventHaru();
+                                debugPrint("confetti実行");
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      ConfettiWidget(
+                        confettiController: _controllerYume,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        blastDirection: pi / 2,
+                        // 紙吹雪を出す方向(この場合画面上に向けて発射)
+                        emissionFrequency: 0.9, // 発射頻度(数が小さいほど紙と紙の間隔が狭くなる)
+                        minBlastForce: 5, // 紙吹雪の出る瞬間の5フレーム分の速度の最小
+                        maxBlastForce:
+                            10, // 紙吹雪の出る瞬間の5フレーム分の速度の最大(数が大きほど紙吹雪は遠くに飛んでいきます。)
+                        numberOfParticles: 7, // 1秒あたりの紙の枚数
+                        gravity: 0.5, // 紙の落ちる速さ(0~1で0だとちょーゆっくり)
+                        colors: const <Color>[
+                          // 紙吹雪の色指定
+                          Colors.red,
+                          Colors.blue,
+                          //最初Colorsでなく、Constants、となっていた。
+                          Colors.green,
+                        ],
+                      ),
+                      //ボタン下スペース
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
                       ),
                       Text('今月のトータル数字: $monthlyHaruka'),
                       Text('カウンター: $harukaCounter'),
@@ -164,9 +228,55 @@ class HomePageState extends State<HomePage> {
                   ),
                   Column(
                     children: [
-                      ElevatedButton(
-                        onPressed: _incrementYumeko,
-                        child: const Text('ゆめこ'),
+                      //夢子ボタン
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: Image.asset(
+                              'assets/animal_happa_tanuki.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: FloatingActionButton(
+                              child: const Text("ゆめこ"),
+                              onPressed: () {
+                                _incrementYumeko;
+                                HapticFeedback.mediumImpact();
+                                _confettiEventYume();
+                                debugPrint("confetti実行");
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      ConfettiWidget(
+                        confettiController: _controllerYume,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        blastDirection: pi / 2,
+                        // 紙吹雪を出す方向(この場合画面上に向けて発射)
+                        emissionFrequency: 0.9, // 発射頻度(数が小さいほど紙と紙の間隔が狭くなる)
+                        minBlastForce: 5, // 紙吹雪の出る瞬間の5フレーム分の速度の最小
+                        maxBlastForce:
+                            10, // 紙吹雪の出る瞬間の5フレーム分の速度の最大(数が大きほど紙吹雪は遠くに飛んでいきます。)
+                        numberOfParticles: 7, // 1秒あたりの紙の枚数
+                        gravity: 0.5, // 紙の落ちる速さ(0~1で0だとちょーゆっくり)
+                        colors: const <Color>[
+                          // 紙吹雪の色指定
+                          Colors.red,
+                          Colors.blue,
+                          //最初Colorsでなく、Constants、となっていた。
+                          Colors.green,
+                        ],
+                      ),
+                      //ボタン下スペース
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
                       ),
                       Text('今月のトータル数字: $monthlyYumeko'),
                       Text('カウンター: $yumekoCounter'),
@@ -176,8 +286,7 @@ class HomePageState extends State<HomePage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  await APIS.addBookToSheet(
-                      harukaCounter, yumekoCounter);
+                  await APIS.addBookToSheet(harukaCounter, yumekoCounter);
                   await APIS.bookNumRegister(harukaCounter, "haru");
                   await APIS.bookNumRegister(yumekoCounter, "yume");
                   setState(() {
@@ -280,8 +389,14 @@ class HomePageState extends State<HomePage> {
                       },
                       shrinkWrap: true,
                     ),
+                    const SizedBox(
+                      width: 60,
+                      height: 10,
+                    ),
                     MaterialButton(
                       color: Colors.lightBlue.shade900,
+                      minWidth: 120,
+                      height: 50,
                       onPressed: () {
                         HapticFeedback.mediumImpact();
                         FocusScope.of(context).unfocus();
@@ -290,8 +405,8 @@ class HomePageState extends State<HomePage> {
                             context: context,
                             builder: (context) {
                               return const AlertDialog(
-                                title:  Text("Oops"),
-                                content:  Text("ちゃんと書きなさい"),
+                                title: Text("Oops"),
+                                content: Text("ちゃんと書きなさい"),
                               );
                             },
                           );
@@ -316,7 +431,7 @@ class HomePageState extends State<HomePage> {
                         });
                       },
                       child: const Text(
-                        "登録",
+                        "  登録  ",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,

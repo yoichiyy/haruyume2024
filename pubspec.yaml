@@ -1,5 +1,5 @@
-name: myapp
-description: "A new Flutter project."
+name: haruyume_app
+description: "本も家計もバッチリよ！"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
@@ -23,6 +23,7 @@ dependencies:
   cloud_firestore_web: ^4.1.1
   url_launcher: ^6.3.0
   shared_preferences: ^2.3.2
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:
@@ -31,3 +32,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+  - lib/assets/animal_happa_tanuki.png
+  - lib/assets/yumekawa_animal_unicorn.png

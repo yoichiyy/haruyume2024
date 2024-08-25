@@ -16,36 +16,41 @@ class HomeCardWidgetKakei extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: Card(
-        shape: const RoundedRectangleBorder(
-          side: BorderSide(
-            color: Colors.black,
-          ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 600,
         ),
-        color: color,
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Text(title.toUpperCase(),
-                      style: Theme.of(context).textTheme.titleLarge),
-                  TextButton(
-                    child: const Text("履歴：スプレッドシート"),
-                    onPressed: () => _openUrl(),
-                  )
-                ],
-              ),
-              Flexible(
-                child: Center(child: child),
-              ),
-            ],
+        child: Card(
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(
+              color: Colors.black,
+            ),
           ),
-        ),
+          color: color,
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Text(title.toUpperCase(),
+                        style: Theme.of(context).textTheme.titleLarge),
+                    TextButton(
+                      child: const Text("履歴：スプレッドシート"),
+                      onPressed: () => _openUrl(),
+                    )
+                  ],
+                ),
+                Flexible(
+                  child: Center(child: child),
+                ),
+              ],
+            ),
+          ),
+        ), //child:card
       ),
-    );
+    ); //padding
   }
 }
 

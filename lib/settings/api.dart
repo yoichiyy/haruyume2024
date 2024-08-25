@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:haruyume_app/settings/japanese_weekdays.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/settings/japanese_weekdays.dart';
 
 class GoogleApiSettings {
   static const String spreadsSheetsUrl =
@@ -105,6 +105,9 @@ class APIS {
     // final snapshot =
     //     await FirebaseFirestore.instance.collection('users').doc(uid).get();
     // final userName = snapshot.data()!['name'] as String;
+    final dailyCount =
+        "${DateTime.now().year}${DateTime.now().month.toString().padLeft(2, "0")}${DateTime.now().day.toString().padLeft(2, "0")}";
+
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
     final monthlyCount =
@@ -114,7 +117,7 @@ class APIS {
     await FirebaseFirestore.instance
         .collection('newCount')
         // .doc(dailyCount + uid + musume)
-        .doc(dateString + musume)
+        .doc(dailyCount + musume)
         .get()
         .then(
           (docSnapshot) => {
@@ -122,14 +125,14 @@ class APIS {
               {
                 FirebaseFirestore.instance
                     .collection('newCount')
-                    .doc(dateString + musume)
+                    .doc(dailyCount + musume)
                     .update({"count": FieldValue.increment(booknum)})
               }
             else
               {
                 FirebaseFirestore.instance
                     .collection('newCount')
-                    .doc(dateString + musume)
+                    .doc(dailyCount + musume)
                     .set(
                   <String, dynamic>{
                     "date": dateString,
