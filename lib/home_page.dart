@@ -27,7 +27,6 @@ class HomePageState extends State<HomePage> {
   int totalYumeko = 0;
   int monthlyHaruka = 0;
   int monthlyYumeko = 0;
-  String? userName = "";
 
   // 家計簿管理部分で使用される変数
   final kakeiController = TextEditingController();
@@ -95,19 +94,8 @@ class HomePageState extends State<HomePage> {
         monthlyYumeko = initialData.monthlyYumeko;
       });
     });
-    _fetchUserName(); // 追加: ユーザー名を取得する関数の呼び出し
   }
 
-  Future<void> _fetchUserName() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      final DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      setState(() {
-        userName = userDoc['name'];
-      });
-    }
-  }
 
   //スプレッドシートからデータを取得
   static Future<MonthlyBookCount> _fetchInitialData() async {
@@ -146,7 +134,7 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _addToSheetInBackground() async {
     await APIS.addKakeiboToSheet(
-        kakeiController.text, category, kakeiNoteController.text, userName);
+        kakeiController.text, category, kakeiNoteController.text);
   }
 
   @override
@@ -161,7 +149,6 @@ class HomePageState extends State<HomePage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              if (userName != null) Text('こんにちは、$userName さん'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -190,7 +177,7 @@ class HomePageState extends State<HomePage> {
               ElevatedButton(
                 onPressed: () async {
                   await APIS.addBookToSheet(
-                      harukaCounter, yumekoCounter, userName);
+                      harukaCounter, yumekoCounter);
                   await APIS.bookNumRegister(harukaCounter, "haru");
                   await APIS.bookNumRegister(yumekoCounter, "yume");
                   setState(() {
@@ -302,17 +289,9 @@ class HomePageState extends State<HomePage> {
                           showDialog<AlertDialog>(
                             context: context,
                             builder: (context) {
-                              return AlertDialog(
-                                title: const Text("Oops"),
-                                content: const Text("ちゃんと書きなさい"),
-                                actions: [
-                                  TextButton(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      FocusScope.of(context).unfocus();
-                                    },
-                                  ),
-                                ],
+                              return const AlertDialog(
+                                title:  Text("Oops"),
+                                content:  Text("ちゃんと書きなさい"),
                               );
                             },
                           );

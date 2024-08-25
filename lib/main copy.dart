@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
 import 'settings/firebase_options.dart';
+import 'user/sign_and_register.dart';
+import 'user/sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const CircularProgressIndicator(); // ローディングインジケーター
           }
           if (snapshot.hasData && snapshot.data == true) {
             return const HomePage();
@@ -33,7 +35,16 @@ class MyApp extends StatelessWidget {
             return StreamBuilder<User?>(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
-                return const CircularProgressIndicator();
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // ローディングインジケーター
+                }
+                if (snapshot.hasData) {
+                  // Firebase Authにユーザーが存在するが、SharedPreferencesに情報がない場合
+                  return const SignInPage();
+                } else {
+                  // Firebase Authにユーザーが存在しない場合
+                  return const SignInRegisterPage();
+                }
               },
             );
           }

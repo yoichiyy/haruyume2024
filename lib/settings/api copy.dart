@@ -21,7 +21,7 @@ class GoogleApiSettings {
 
 class APIS {
   static Future<void> addBookToSheet(
-      int harukaCounter, int yumekoCounter) async {
+      int harukaCounter, int yumekoCounter, username) async {
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
     String url =
@@ -34,7 +34,7 @@ class APIS {
         'category': "book",
         'date': dateString,
         'note': yumekoCounter,
-        'user': "",
+        'user': username,
       });
       debugPrint("Json Succeeded: $body");
 
@@ -64,7 +64,7 @@ class APIS {
   }
 
   static Future<void> addKakeiboToSheet(
-      String amount, String category, String note) async {
+      String amount, String category, String note, username) async {
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
     String url =
@@ -77,7 +77,7 @@ class APIS {
         'category': category,
         'date': dateString,
         'note': note,
-        'user': "",
+        'user': username,
       });
       debugPrint("Json Succeeded:$body");
 
