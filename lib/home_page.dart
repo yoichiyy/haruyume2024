@@ -4,9 +4,9 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:haruyume_app/home_card_kakei.dart';
-import 'package:haruyume_app/settings/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:myapp/home_card_kakei.dart';
+import 'package:myapp/settings/api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -189,17 +189,16 @@ class HomePageState extends State<HomePage> {
                             child: FloatingActionButton(
                               child: const Text("はるか"),
                               onPressed: () {
-                                _incrementHaruka;
-                                HapticFeedback.mediumImpact();
+                                _incrementHaruka();
+                                // HapticFeedback.mediumImpact();
                                 _confettiEventHaru();
-                                debugPrint("confetti実行");
                               },
                             ),
                           ),
                         ],
                       ),
                       ConfettiWidget(
-                        confettiController: _controllerYume,
+                        confettiController: _controllerHaru,
                         blastDirectionality: BlastDirectionality.explosive,
                         blastDirection: pi / 2,
                         // 紙吹雪を出す方向(この場合画面上に向けて発射)
@@ -245,8 +244,8 @@ class HomePageState extends State<HomePage> {
                             child: FloatingActionButton(
                               child: const Text("ゆめこ"),
                               onPressed: () {
-                                _incrementYumeko;
-                                HapticFeedback.mediumImpact();
+                                // HapticFeedback.mediumImpact();
+                                _incrementYumeko();
                                 _confettiEventYume();
                                 debugPrint("confetti実行");
                               },

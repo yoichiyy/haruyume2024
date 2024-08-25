@@ -1,4 +1,4 @@
-name: haruyume_app
+name: myapp
 description: "本も家計もバッチリよ！"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
@@ -33,5 +33,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - lib/assets/animal_happa_tanuki.png
-  - lib/assets/yumekawa_animal_unicorn.png
+    - assets/animal_happa_tanuki.png
+    - assets/yumekawa_animal_unicorn.png

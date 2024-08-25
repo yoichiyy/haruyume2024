@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haruyume_app/settings/japanese_weekdays.dart';
+import 'package:myapp/settings/japanese_weekdays.dart';
 import 'package:http/http.dart' as http;
 
 class GoogleApiSettings {

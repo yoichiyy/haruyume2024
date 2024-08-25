@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:haruyume_app/home_page.dart';
-import 'package:haruyume_app/user/sign_in.dart';
+import 'package:myapp/home_page.dart';
+import 'package:myapp/user/sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInRegisterPage extends StatefulWidget {
