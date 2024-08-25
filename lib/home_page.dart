@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:myapp/home_card_kakei.dart';
 import 'package:myapp/settings/api.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -147,11 +146,7 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _addToSheetInBackground() async {
     await APIS.addKakeiboToSheet(
-      kakeiController.text,
-      category,
-      kakeiNoteController.text,
-      userName
-    );
+        kakeiController.text, category, kakeiNoteController.text, userName);
   }
 
   @override
@@ -193,8 +188,15 @@ class HomePageState extends State<HomePage> {
                 ],
               ),
               ElevatedButton(
-                onPressed: () {
-                  APIS.addBookToSheet(harukaCounter, yumekoCounter, userName);
+                onPressed: () async {
+                  await APIS.addBookToSheet(
+                      harukaCounter, yumekoCounter, userName);
+                  await APIS.bookNumRegister(harukaCounter, "haru");
+                  await APIS.bookNumRegister(yumekoCounter, "yume");
+                  setState(() {
+                    harukaCounter = 0;
+                    yumekoCounter = 0;
+                  });
                 },
                 child: const Text('送信'),
               ),

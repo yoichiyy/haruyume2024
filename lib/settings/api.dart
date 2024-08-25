@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/settings/japanese_weekdays.dart';
@@ -23,7 +24,6 @@ class APIS {
       int harukaCounter, int yumekoCounter, username) async {
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
-
     String url =
         "https://script.google.com/macros/s/AKfycby5FiSmh6i0YBI1zN1JguPvD6sJb76vIcZGqGTPv_BZh0awvQR0wQoMXv3pxiaFew/exec";
 
@@ -59,8 +59,7 @@ class APIS {
       }
     } catch (e) {
       debugPrint('Request failed: $e');
-      // ここでブレークポイントを設定してみる
-      rethrow; // 必要に応じて例外を再スローする
+      rethrow;
     }
   }
 
@@ -68,7 +67,6 @@ class APIS {
       String amount, String category, String note, username) async {
     final dateString =
         "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
-
     String url =
         "https://script.google.com/macros/s/AKfycby5FiSmh6i0YBI1zN1JguPvD6sJb76vIcZGqGTPv_BZh0awvQR0wQoMXv3pxiaFew/exec";
 
@@ -101,5 +99,80 @@ class APIS {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  static Future<void> bookNumRegister(int booknum, String musume) async {
+    // final snapshot =
+    //     await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    // final userName = snapshot.data()!['name'] as String;
+    final dateString =
+        "${DateTime.now().month}/${DateTime.now().day}(${DateTime.now().japaneseWeekday})";
+    final monthlyCount =
+        "${DateTime.now().year}${DateTime.now().month.toString().padLeft(2, "0")}";
+    final monthString = "${DateTime.now().year}年${DateTime.now().month}月";
+
+    await FirebaseFirestore.instance
+        .collection('newCount')
+        // .doc(dailyCount + uid + musume)
+        .doc(dateString + musume)
+        .get()
+        .then(
+          (docSnapshot) => {
+            if (docSnapshot.exists)
+              {
+                FirebaseFirestore.instance
+                    .collection('newCount')
+                    .doc(dateString + musume)
+                    .update({"count": FieldValue.increment(booknum)})
+              }
+            else
+              {
+                FirebaseFirestore.instance
+                    .collection('newCount')
+                    .doc(dateString + musume)
+                    .set(
+                  <String, dynamic>{
+                    "date": dateString,
+                    "month": monthlyCount,
+                    "count": booknum,
+                    "user": "",
+                    "time": "",
+                    "musume": musume,
+                  },
+                ),
+              },
+          },
+        ); //then
+
+    // ここから、monthlyへの登録
+    await FirebaseFirestore.instance
+        .collection('monthHistory')
+        .doc(monthlyCount + musume)
+        .get()
+        .then(
+          (docSnapshot) => {
+            if (docSnapshot.exists)
+              {
+                FirebaseFirestore.instance
+                    .collection('monthHistory')
+                    .doc(monthlyCount + musume)
+                    .update({"count": FieldValue.increment(booknum)})
+              }
+            else
+              {
+                FirebaseFirestore.instance
+                    .collection('monthHistory')
+                    .doc(monthlyCount + musume)
+                    .set(
+                  <String, dynamic>{
+                    "monthId": monthlyCount,
+                    "count": booknum,
+                    "month": monthString,
+                    "musume": musume,
+                  },
+                ),
+              },
+          },
+        ); //then
   }
 }
