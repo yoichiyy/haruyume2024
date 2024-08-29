@@ -15,9 +15,32 @@ class HomePage extends StatefulWidget {
 }
 
 class MonthlyBookCount {
-  MonthlyBookCount({required this.monthlyHaruka, required this.monthlyYumeko});
+  MonthlyBookCount({
+    required this.monthlyHaruka,
+    required this.monthlyYumeko,
+    required this.haruROne,
+    required this.haruRTwo,
+    required this.haruRThree,
+    required this.haruRFour,
+    required this.yumeROne,
+    required this.yumeRTwo,
+    required this.yumeRThree,
+    required this.yumeRFour,
+    required this.haruGinko,
+    required this.yumeGinko,
+  });
   final int monthlyHaruka;
   final int monthlyYumeko;
+  final String haruROne;
+  final String haruRTwo;
+  final String haruRThree;
+  final String haruRFour;
+  final String yumeROne;
+  final String yumeRTwo;
+  final String yumeRThree;
+  final String yumeRFour;
+  final int haruGinko;
+  final int yumeGinko;
 }
 
 class HomePageState extends State<HomePage> {
@@ -27,6 +50,16 @@ class HomePageState extends State<HomePage> {
   int totalYumeko = 0;
   int monthlyHaruka = 0;
   int monthlyYumeko = 0;
+  String haruROne = "";
+  String haruRTwo = "";
+  String haruRThree = "";
+  String haruRFour = "";
+  String yumeROne = "";
+  String yumeRTwo = "";
+  String yumeRThree = "";
+  String yumeRFour = "";
+  int haruGinko = 0;
+  int yumeGinko = 0;
 
   // 家計簿管理部分で使用される変数
   final kakeiController = TextEditingController();
@@ -109,31 +142,65 @@ class HomePageState extends State<HomePage> {
       setState(() {
         monthlyHaruka = initialData.monthlyHaruka;
         monthlyYumeko = initialData.monthlyYumeko;
+        haruROne = initialData.haruROne;
+        haruRTwo = initialData.haruRTwo;
+        haruRThree = initialData.haruRThree;
+        haruRFour = initialData.haruRFour;
+        yumeROne = initialData.yumeROne;
+        yumeRTwo = initialData.yumeRTwo;
+        yumeRThree = initialData.yumeRThree;
+        yumeRFour = initialData.yumeRFour;
+        haruGinko = initialData.haruGinko;
+        yumeGinko = initialData.yumeGinko;
       });
     });
   }
 
   //スプレッドシートからデータを取得
   static Future<MonthlyBookCount> _fetchInitialData() async {
-    try {
-      final url = GoogleApiSettings.getGoogleSheet();
-      final res = await http.get(Uri.parse(url));
-      //中身のチェック
-      final Map<String, dynamic> cellValues = json.decode(res.body);
-      final List<dynamic> row3 = cellValues['values'][2];
+    // try {
+    final url = GoogleApiSettings.getGoogleBookSheet();
+    final res = await http.get(Uri.parse(url));
+    //中身のチェック
+    final Map<String, dynamic> cellValues = json.decode(res.body);
+    final List<dynamic> row3 = cellValues['values'][2];
+    // debugPrint("■■■${row3.toString()}");
 
-      if (row3.length >= 2) {
-        final monthlyHaruka = int.tryParse(row3[1].toString()) ?? 0;
-        final monthlyYumeko = int.tryParse(row3[2].toString()) ?? 0;
-        return MonthlyBookCount(
-            monthlyHaruka: monthlyHaruka, monthlyYumeko: monthlyYumeko);
-      } else {
-        throw ('Invalid data format in B3 and C3 cells.');
-      }
-    } catch (e) {
-      debugPrint(e.toString()); // エラーはログに出力して握りつぶす
-      return MonthlyBookCount(monthlyHaruka: 0, monthlyYumeko: 0); // デフォルト値を返す
+    if (row3.length >= 2) {
+      final monthlyHaruka = int.tryParse(row3[1].toString()) ?? 0;
+      final monthlyYumeko = int.tryParse(row3[2].toString()) ?? 0;
+      final haruROne = row3[6].toString();
+      final haruRTwo = row3[7].toString();
+      final haruRThree = row3[8].toString();
+      final haruRFour = row3[9].toString();
+      final yumeROne = row3[10].toString();
+      final yumeRTwo = row3[11].toString();
+      final yumeRThree = row3[12].toString();
+      final yumeRFour = row3[13].toString();
+      final haruGinko = int.tryParse(row3[14].toString()) ?? 0;
+      final yumeGinko = int.tryParse(row3[15].toString()) ?? 0;
+
+      return MonthlyBookCount(
+        monthlyHaruka: monthlyHaruka,
+        monthlyYumeko: monthlyYumeko,
+        haruROne: haruROne,
+        haruRTwo: haruRTwo,
+        haruRThree: haruRThree,
+        haruRFour: haruRFour,
+        yumeROne: yumeROne,
+        yumeRTwo: yumeRTwo,
+        yumeRThree: yumeRThree,
+        yumeRFour: yumeRFour,
+        haruGinko: haruGinko,
+        yumeGinko: yumeGinko,
+      );
+    } else {
+      throw ('Invalid data format in B3 and C3 cells.');
     }
+    // } catch (e) {
+    //   debugPrint(e.toString()); // エラーはログに出力して握りつぶす
+    //   return MonthlyBookCount(monthlyHaruka: 0, monthlyYumeko: 0); // デフォルト値を返す
+    // }
   } //fetchInitData
 
   void _incrementHaruka() {
@@ -155,6 +222,75 @@ class HomePageState extends State<HomePage> {
         kakeiController.text, category, kakeiNoteController.text);
   }
 
+  // Method to cycle through the button states
+  // String _cycleButtonText(String currentText, String originalText) {
+  //   if (currentText == originalText) {
+  //     return "◯";
+  //   } else if (currentText == "◯") {
+  //     return "／";
+  //   } else {
+  //     return originalText;
+  //   }
+  // }
+
+  // Increment methods
+  void _incrementHarukaGinko() {
+    setState(() {
+      haruGinko++;
+    });
+  }
+
+  void _incrementYumeGinko() {
+    setState(() {
+      yumeGinko++;
+    });
+  }
+
+  // Helper widget for Haru buttons
+  Widget _buildHaruButton(String currentText, String originalText) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            // 状態を直接変更
+            if (currentText == originalText) {
+              haruROne = "◯";
+            } else if (currentText == "◯") {
+              haruROne = "／";
+            } else {
+              haruROne = originalText;
+            }
+            APIS.addRoutineToSheet(haruROne, "B4");
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Text(haruROne),
+      ),
+    );
+  }
+
+  // Helper widget for Yume buttons
+  Widget _buildYumeButton(String text, ValueChanged<String> onPressed) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: ElevatedButton(
+        onPressed: () => onPressed(text),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Text(text),
+      ),
+    );
+  }
+
+  //描画部分
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,35 +304,35 @@ class HomePageState extends State<HomePage> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  //晴加ボタン
                   Column(
                     children: [
-                      Row(
-                        //晴加ボタンとユニコーンちゃん
-                        children: [
-                          SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: Image.asset(
-                              'assets/yumekawa_animal_unicorn.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: FloatingActionButton(
-                              child: const Text("はるか"),
-                              onPressed: () {
-                                _incrementHaruka();
-                                // HapticFeedback.mediumImpact();
-                                _confettiEventHaru();
-                              },
-                            ),
-                          ),
-                        ],
+                      // Row(
+                      // children: [
+                      // SizedBox(
+                      //   width: 60,
+                      //   height: 60,
+                      //   child: Image.asset(
+                      //     'assets/yumekawa_animal_unicorn.png',
+                      //     fit: BoxFit.cover,
+                      //   ),
+                      // ),
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: FloatingActionButton(
+                          child: const Text("はるか"),
+                          onPressed: () {
+                            _incrementHaruka();
+                            // HapticFeedback.mediumImpact();
+                            _confettiEventHaru();
+                          },
+                        ),
                       ),
+                      // ],
+                      // ),
                       ConfettiWidget(
                         confettiController: _controllerHaru,
                         blastDirectionality: BlastDirectionality.explosive,
@@ -225,7 +361,7 @@ class HomePageState extends State<HomePage> {
                         children: [
                           Text.rich(
                             TextSpan(
-                              text: '今月のトータル数字: ', // この部分はデフォルトのスタイルを適用
+                              text: '今月: ', // この部分はデフォルトのスタイルを適用
                               children: <TextSpan>[
                                 TextSpan(
                                   text: '$monthlyHaruka', // この部分だけフォントサイズ20に変更
@@ -249,34 +385,35 @@ class HomePageState extends State<HomePage> {
                       )
                     ],
                   ),
+                  const SizedBox(width: 50),
+                  //夢子ボタン
                   Column(
                     children: [
-                      //夢子ボタン
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: Image.asset(
-                              'assets/animal_happa_tanuki.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: FloatingActionButton(
-                              child: const Text("ゆめこ"),
-                              onPressed: () {
-                                // HapticFeedback.mediumImpact();
-                                _incrementYumeko();
-                                _confettiEventYume();
-                                debugPrint("confetti実行");
-                              },
-                            ),
-                          ),
-                        ],
+                      // Row(
+                      // children: [
+                      // SizedBox(
+                      //   width: 60,
+                      //   height: 60,
+                      //   child: Image.asset(
+                      //     'assets/animal_happa_tanuki.png',
+                      //     fit: BoxFit.cover,
+                      //   ),
+                      // ),
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: FloatingActionButton(
+                          child: const Text("ゆめこ"),
+                          onPressed: () {
+                            // HapticFeedback.mediumImpact();
+                            _incrementYumeko();
+                            _confettiEventYume();
+                            debugPrint("confetti実行");
+                          },
+                        ),
                       ),
+                      // ],
+                      // ),
                       ConfettiWidget(
                         confettiController: _controllerYume,
                         blastDirectionality: BlastDirectionality.explosive,
@@ -305,7 +442,7 @@ class HomePageState extends State<HomePage> {
                         children: [
                           Text.rich(
                             TextSpan(
-                              text: '今月のトータル数字: ', // この部分はデフォルトのスタイルを適用
+                              text: '今月: ', // この部分はデフォルトのスタイルを適用
                               children: <TextSpan>[
                                 TextSpan(
                                   text: '$monthlyYumeko', // この部分だけフォントサイズ20に変更
@@ -334,8 +471,8 @@ class HomePageState extends State<HomePage> {
               ElevatedButton(
                 onPressed: () async {
                   await APIS.addBookToSheet(harukaCounter, yumekoCounter);
-                  await APIS.bookNumRegister(harukaCounter, "haru");
-                  await APIS.bookNumRegister(yumekoCounter, "yume");
+                  // await APIS.bookNumRegister(harukaCounter, "haru");
+                  // await APIS.bookNumRegister(yumekoCounter, "yume");
                   setState(() {
                     harukaCounter = 0;
                     yumekoCounter = 0;
@@ -344,8 +481,196 @@ class HomePageState extends State<HomePage> {
                 child: const Text('送信'),
               ),
               const SizedBox(height: 20), // 絵本カウント部分と家計簿管理部分の間のスペース
+              //子ども銀行
+              HomeCardWidgetKakei(
+                  title: "子ども",
+                  color: const Color.fromARGB(255, 216, 207, 154),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //左列　はるか銀行R
+                            Column(
+                              children: [
+                                Text(
+                                  '$haruGinko',
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                                SizedBox(
+                                  width: 60,
+                                  height: 60,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _incrementHarukaGinko();
+                                    },
+                                    child: Image.asset(
+                                      'assets/yumekawa_animal_unicorn.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/osara_color.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildHaruButton(haruROne, haruROne),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/syufu_otetsudai.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    // _buildHaruButton(haruRTwo, (text) {
+                                    //   setState(() {
+                                    //     _cycleButtonText(text, haruRTwo);
+                                    //     APIS.addRoutineToSheet(text, "C4");
+                                    //   });
+                                    // }),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/shoes_kutsu_soroeru.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    // _buildHaruButton(haruRThree, (text) {
+                                    //   setState(() {
+                                    //     _cycleButtonText(text, haruRThree);
+                                    //     APIS.addRoutineToSheet(text, "D4");
+                                    //   });
+                                    // }),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/hamster_sleeping_golden.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    // _buildHaruButton(haruRFour, (text) {
+                                    //   setState(() {
+                                    //     _cycleButtonText(text, haruRFour);
+                                    //     APIS.addRoutineToSheet(text, "E4");
+                                    //   });
+                                    // }),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            // 右列夢子銀行 Column
+                            Column(
+                              children: [
+                                Text(
+                                  '$yumeGinko',
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                                SizedBox(
+                                  width: 60,
+                                  height: 60,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _incrementYumeGinko();
+                                    },
+                                    child: Image.asset(
+                                      'assets/animal_happa_tanuki.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                //はるRボタンリスト開始
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/osara_color.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildYumeButton(yumeROne, (text) {
+                                      setState(() {
+                                        // _cycleButtonText(text, yumeROne);
+                                        APIS.addRoutineToSheet(text, "F4");
+                                      });
+                                    }),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/syufu_otetsudai.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildYumeButton(yumeRTwo, (text) {
+                                      setState(() {
+                                        // _cycleButtonText(text, yumeRTwo);
+                                        APIS.addRoutineToSheet(text, "G4");
+                                      });
+                                    }),
+                                  ],
+                                ),
 
-              // 家計簿管理部分
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/shoes_kutsu_soroeru.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildYumeButton(yumeRThree, (text) {
+                                      setState(() {
+                                        // _cycleButtonText(text, yumeRThree);
+                                        APIS.addRoutineToSheet(text, "H4");
+                                      });
+                                    }),
+                                  ],
+                                ),
+
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/kotowaza_neko_koban.png',
+                                      width: 56,
+                                      height: 56,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildYumeButton(yumeRFour, (text) {
+                                      setState(() {
+                                        // _cycleButtonText(text, yumeRFour);
+                                        APIS.addRoutineToSheet(text, "I4");
+                                      });
+                                    }),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ], //ゆめはるRボタン(children)
+                        ), //Row
+                      ), //Center
+                    ], //Children
+                  ) //Column
+                  ), //card widget
+              // 家計簿
               HomeCardWidgetKakei(
                 title: "おこづかい",
                 color: Colors.green[100]!,
@@ -492,11 +817,11 @@ class HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-              ),
+              ), //card widget
             ],
           ),
-        ),
-      ),
-    );
+        ), //SingleChildScrollView
+      ), //GestureDetector
+    ); //Scaffold
   }
 }
