@@ -60,6 +60,14 @@ class HomePageState extends State<HomePage> {
   String yumeRFour = "";
   int haruGinko = 0;
   int yumeGinko = 0;
+  final ValueNotifier<String> currentHaruOne = ValueNotifier<String>("");
+  final ValueNotifier<String> currentHaruTwo = ValueNotifier<String>("");
+  final ValueNotifier<String> currentHaruThree = ValueNotifier<String>("");
+  final ValueNotifier<String> currentHaruFour = ValueNotifier<String>("");
+  final ValueNotifier<String> currentYumeOne = ValueNotifier<String>("");
+  final ValueNotifier<String> currentYumeTwo = ValueNotifier<String>("");
+  final ValueNotifier<String> currentYumeThree = ValueNotifier<String>("");
+  final ValueNotifier<String> currentYumeFour = ValueNotifier<String>("");
 
   // 家計簿管理部分で使用される変数
   final kakeiController = TextEditingController();
@@ -156,6 +164,19 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  @override
+  void dispose() {
+    currentHaruOne.dispose();
+    currentHaruTwo.dispose();
+    currentHaruThree.dispose();
+    currentHaruFour.dispose();
+    currentYumeOne.dispose();
+    currentYumeTwo.dispose();
+    currentYumeThree.dispose();
+    currentYumeFour.dispose();
+    super.dispose();
+  }
+
   //スプレッドシートからデータを取得
   static Future<MonthlyBookCount> _fetchInitialData() async {
     // try {
@@ -222,17 +243,6 @@ class HomePageState extends State<HomePage> {
         kakeiController.text, category, kakeiNoteController.text);
   }
 
-  // Method to cycle through the button states
-  // String _cycleButtonText(String currentText, String originalText) {
-  //   if (currentText == originalText) {
-  //     return "◯";
-  //   } else if (currentText == "◯") {
-  //     return "／";
-  //   } else {
-  //     return originalText;
-  //   }
-  // }
-
   // Increment methods
   void _incrementHarukaGinko() {
     setState(() {
@@ -246,46 +256,39 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  // Helper widget for Haru buttons
-  Widget _buildHaruButton(String currentText, String originalText) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            // 状態を直接変更
-            if (currentText == originalText) {
-              haruROne = "◯";
-            } else if (currentText == "◯") {
-              haruROne = "／";
-            } else {
-              haruROne = originalText;
-            }
-            APIS.addRoutineToSheet(haruROne, "B4");
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(haruROne),
-      ),
-    );
+  // Helper method to cycle button text
+  String _cycleButtonText(String currentText, String originalText) {
+    if (currentText == originalText) {
+      return "◯";
+    } else if (currentText == "◯") {
+      return "／";
+    } else {
+      return originalText;
+    }
   }
 
-  // Helper widget for Yume buttons
-  Widget _buildYumeButton(String text, ValueChanged<String> onPressed) {
+  // Helper widget for Haru buttons
+  Widget _buildRoutineButton(
+      ValueNotifier<String> currentTextNotifier, String originalText, cell) {
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
-      child: ElevatedButton(
-        onPressed: () => onPressed(text),
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(text),
+      child: ValueListenableBuilder<String>(
+        valueListenable: currentTextNotifier,
+        builder: (context, currentText, _) {
+          return ElevatedButton(
+            onPressed: () {
+              currentTextNotifier.value =
+                  _cycleButtonText(currentText, originalText);
+              APIS.addRoutineToSheet(currentTextNotifier.value, cell);
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: Text(currentText),
+          );
+        },
       ),
     );
   }
@@ -473,6 +476,7 @@ class HomePageState extends State<HomePage> {
                   await APIS.addBookToSheet(harukaCounter, yumekoCounter);
                   // await APIS.bookNumRegister(harukaCounter, "haru");
                   // await APIS.bookNumRegister(yumekoCounter, "yume");
+                  await Future.delayed(const Duration(milliseconds: 100));
                   setState(() {
                     harukaCounter = 0;
                     yumekoCounter = 0;
@@ -521,7 +525,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    _buildHaruButton(haruROne, haruROne),
+                                    _buildRoutineButton(
+                                        currentHaruOne, haruROne, "B4"),
                                   ],
                                 ),
                                 Row(
@@ -532,12 +537,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    // _buildHaruButton(haruRTwo, (text) {
-                                    //   setState(() {
-                                    //     _cycleButtonText(text, haruRTwo);
-                                    //     APIS.addRoutineToSheet(text, "C4");
-                                    //   });
-                                    // }),
+                                    _buildRoutineButton(
+                                        currentHaruTwo, haruRTwo, "C4"),
                                   ],
                                 ),
                                 Row(
@@ -548,12 +549,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    // _buildHaruButton(haruRThree, (text) {
-                                    //   setState(() {
-                                    //     _cycleButtonText(text, haruRThree);
-                                    //     APIS.addRoutineToSheet(text, "D4");
-                                    //   });
-                                    // }),
+                                    _buildRoutineButton(
+                                        currentHaruThree, haruRThree, "D4"),
                                   ],
                                 ),
                                 Row(
@@ -564,12 +561,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    // _buildHaruButton(haruRFour, (text) {
-                                    //   setState(() {
-                                    //     _cycleButtonText(text, haruRFour);
-                                    //     APIS.addRoutineToSheet(text, "E4");
-                                    //   });
-                                    // }),
+                                    _buildRoutineButton(
+                                        currentHaruFour, haruRFour, "E4"),
                                   ],
                                 ),
                               ],
@@ -595,7 +588,7 @@ class HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                //はるRボタンリスト開始
+                                //ゆめRボタンリスト開始
                                 Row(
                                   children: [
                                     Image.asset(
@@ -604,12 +597,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    _buildYumeButton(yumeROne, (text) {
-                                      setState(() {
-                                        // _cycleButtonText(text, yumeROne);
-                                        APIS.addRoutineToSheet(text, "F4");
-                                      });
-                                    }),
+                                    _buildRoutineButton(
+                                        currentYumeOne, yumeROne, "F4"),
                                   ],
                                 ),
                                 Row(
@@ -620,12 +609,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    _buildYumeButton(yumeRTwo, (text) {
-                                      setState(() {
-                                        // _cycleButtonText(text, yumeRTwo);
-                                        APIS.addRoutineToSheet(text, "G4");
-                                      });
-                                    }),
+                                    _buildRoutineButton(
+                                        currentYumeTwo, yumeRTwo, "G4"),
                                   ],
                                 ),
 
@@ -637,12 +622,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    _buildYumeButton(yumeRThree, (text) {
-                                      setState(() {
-                                        // _cycleButtonText(text, yumeRThree);
-                                        APIS.addRoutineToSheet(text, "H4");
-                                      });
-                                    }),
+                                    _buildRoutineButton(
+                                        currentYumeThree, yumeRThree, "H4"),
                                   ],
                                 ),
 
@@ -654,12 +635,8 @@ class HomePageState extends State<HomePage> {
                                       height: 56,
                                     ),
                                     const SizedBox(width: 8),
-                                    _buildYumeButton(yumeRFour, (text) {
-                                      setState(() {
-                                        // _cycleButtonText(text, yumeRFour);
-                                        APIS.addRoutineToSheet(text, "I4");
-                                      });
-                                    }),
+                                    _buildRoutineButton(
+                                        currentYumeFour, yumeRFour, "I4"),
                                   ],
                                 ),
                               ],
