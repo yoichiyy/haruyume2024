@@ -60,6 +60,9 @@ class HomePageState extends State<HomePage> {
   String yumeRFour = "";
   int haruGinko = 0;
   int yumeGinko = 0;
+  int haruBonus = 0;
+  int yumeBonus = 0;
+
   final ValueNotifier<String> currentHaruOne = ValueNotifier<String>("");
   final ValueNotifier<String> currentHaruTwo = ValueNotifier<String>("");
   final ValueNotifier<String> currentHaruThree = ValueNotifier<String>("");
@@ -72,6 +75,8 @@ class HomePageState extends State<HomePage> {
   // 家計簿管理部分で使用される変数
   final kakeiController = TextEditingController();
   final kakeiNoteController = TextEditingController();
+  final haruBonusNoteController = TextEditingController();
+  final yumeBonusNoteController = TextEditingController();
 
   void _checked(int index) {
     setState(() {
@@ -199,7 +204,7 @@ class HomePageState extends State<HomePage> {
       final yumeRThree = row3[12].toString();
       final yumeRFour = row3[13].toString();
       final haruGinko = int.tryParse(row3[14].toString()) ?? 0;
-      final yumeGinko = int.tryParse(row3[15].toString()) ?? 0;
+      final yumeGinko = int.tryParse(row3[16].toString()) ?? 0;
 
       return MonthlyBookCount(
         monthlyHaruka: monthlyHaruka,
@@ -244,7 +249,7 @@ class HomePageState extends State<HomePage> {
   }
 
   // Increment methods
-  void _incrementHarukaGinko() {
+  void _incrementHaruGinko() {
     setState(() {
       haruGinko++;
     });
@@ -256,11 +261,45 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  void _decrementHaruGinko() {
+    setState(() {
+      haruGinko--;
+    });
+  }
+
+  void _decrementYumeGinko() {
+    setState(() {
+      yumeGinko--;
+    });
+  }
+
+  void _incrementHaruBonus() {
+    setState(() {
+      haruBonus++;
+    });
+  }
+
+  void _incrementYumeBonus() {
+    setState(() {
+      yumeBonus++;
+    });
+  }
+
   // Helper method to cycle button text
-  String _cycleButtonText(String currentText, String originalText) {
+  String _cycleButtonText(String currentText, String originalText, cell) {
     if (currentText == originalText) {
+      if (cell == 'F4' || cell == 'G4' || cell == 'H4' || cell == 'I4') {
+        _incrementYumeGinko();
+      } else {
+        _incrementHaruGinko();
+      }
       return "◯";
     } else if (currentText == "◯") {
+      if (cell == 'F4' || cell == 'G4' || cell == 'H4' || cell == 'I4') {
+        _decrementYumeGinko();
+      } else {
+        _decrementHaruGinko();
+      }
       return "／";
     } else {
       return originalText;
@@ -278,7 +317,7 @@ class HomePageState extends State<HomePage> {
           return ElevatedButton(
             onPressed: () {
               currentTextNotifier.value =
-                  _cycleButtonText(currentText, originalText);
+                  _cycleButtonText(currentText, originalText, cell);
               APIS.addRoutineToSheet(currentTextNotifier.value, cell);
             },
             style: ElevatedButton.styleFrom(
@@ -392,16 +431,6 @@ class HomePageState extends State<HomePage> {
                   //夢子ボタン
                   Column(
                     children: [
-                      // Row(
-                      // children: [
-                      // SizedBox(
-                      //   width: 60,
-                      //   height: 60,
-                      //   child: Image.asset(
-                      //     'assets/animal_happa_tanuki.png',
-                      //     fit: BoxFit.cover,
-                      //   ),
-                      // ),
                       SizedBox(
                         width: 60,
                         height: 60,
@@ -472,19 +501,23 @@ class HomePageState extends State<HomePage> {
                 ],
               ),
               ElevatedButton(
-                onPressed: () async {
-                  await APIS.addBookToSheet(harukaCounter, yumekoCounter);
-                  // await APIS.bookNumRegister(harukaCounter, "haru");
-                  // await APIS.bookNumRegister(yumekoCounter, "yume");
-                  await Future.delayed(const Duration(milliseconds: 100));
+                onPressed: () {
+                  APIS.addBookToSheet(harukaCounter, yumekoCounter);
+                },
+                child: const Text('送信'),
+              ),
+              const SizedBox(height: 20), // 絵本カウント部分と家計簿管理部分の間のスペース
+              ElevatedButton(
+                onPressed: () {
                   setState(() {
                     harukaCounter = 0;
                     yumekoCounter = 0;
                   });
                 },
-                child: const Text('送信'),
+                child: const Text('リセット'),
               ),
               const SizedBox(height: 20), // 絵本カウント部分と家計簿管理部分の間のスペース
+
               //子ども銀行
               HomeCardWidgetKakei(
                   title: "子ども",
@@ -500,21 +533,8 @@ class HomePageState extends State<HomePage> {
                             Column(
                               children: [
                                 Text(
-                                  '$haruGinko',
+                                  'はるか  $haruGinko',
                                   style: const TextStyle(fontSize: 30),
-                                ),
-                                SizedBox(
-                                  width: 60,
-                                  height: 60,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _incrementHarukaGinko();
-                                    },
-                                    child: Image.asset(
-                                      'assets/yumekawa_animal_unicorn.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 Row(
@@ -565,27 +585,108 @@ class HomePageState extends State<HomePage> {
                                         currentHaruFour, haruRFour, "E4"),
                                   ],
                                 ),
+                                const SizedBox(height: 50),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _incrementHaruBonus();
+                                            },
+                                            child: Image.asset(
+                                              'assets/yumekawa_animal_unicorn.png',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          '$haruBonus',
+                                          style: const TextStyle(fontSize: 30),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: TextFormField(
+                                        controller: haruBonusNoteController,
+                                        decoration: const InputDecoration(
+                                            hintText: "note"),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                    MaterialButton(
+                                      color: Colors.lightBlue.shade900,
+                                      onPressed: () {
+                                        HapticFeedback.mediumImpact();
+                                        FocusScope.of(context).unfocus();
+                                        if (haruBonusNoteController
+                                            .text.isEmpty) {
+                                          showDialog<AlertDialog>(
+                                            context: context,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                title: Text("Oops"),
+                                                content: Text("ちゃんと書きなさい"),
+                                              );
+                                            },
+                                          );
+                                          return;
+                                        } else {
+                                          APIS.addBonusToSheet(
+                                              "haruBonus",
+                                              haruBonus,
+                                              haruBonusNoteController.text);
+                                        }
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: const Text('おめでとうございます。'),
+                                            behavior: SnackBarBehavior.floating,
+                                            duration: const Duration(
+                                                milliseconds: 400),
+                                            margin: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        2 -
+                                                    50),
+                                          ),
+                                        );
+                                        setState(() {
+                                          haruBonusNoteController.clear();
+                                          haruBonus = 0;
+                                        });
+                                      },
+                                      child: const Text(
+                                        "Bonus",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                             // 右列夢子銀行 Column
                             Column(
                               children: [
                                 Text(
-                                  '$yumeGinko',
+                                  'ゆめこ  $yumeGinko',
                                   style: const TextStyle(fontSize: 30),
-                                ),
-                                SizedBox(
-                                  width: 60,
-                                  height: 60,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _incrementYumeGinko();
-                                    },
-                                    child: Image.asset(
-                                      'assets/animal_happa_tanuki.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 //ゆめRボタンリスト開始
@@ -637,6 +738,100 @@ class HomePageState extends State<HomePage> {
                                     const SizedBox(width: 8),
                                     _buildRoutineButton(
                                         currentYumeFour, yumeRFour, "I4"),
+                                  ],
+                                ),
+                                const SizedBox(height: 50),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _incrementYumeBonus();
+                                            },
+                                            child: Image.asset(
+                                              'assets/animal_happa_tanuki.png',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          '$yumeBonus',
+                                          style: const TextStyle(fontSize: 30),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: TextFormField(
+                                        controller: yumeBonusNoteController,
+                                        decoration: const InputDecoration(
+                                            hintText: "note"),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                    MaterialButton(
+                                      color: Colors.lightBlue.shade900,
+                                      onPressed: () {
+                                        HapticFeedback.mediumImpact();
+                                        FocusScope.of(context).unfocus();
+                                        if (yumeBonusNoteController
+                                            .text.isEmpty) {
+                                          showDialog<AlertDialog>(
+                                            context: context,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                title: Text("Oops"),
+                                                content: Text("ちゃんと書きなさい"),
+                                              );
+                                            },
+                                          );
+                                          return;
+                                        } else {
+                                          APIS.addBonusToSheet(
+                                              "yumeBonus",
+                                              yumeBonus,
+                                              yumeBonusNoteController.text);
+                                        }
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: const Text('おめでとうございます。'),
+                                            behavior: SnackBarBehavior.floating,
+                                            duration: const Duration(
+                                                milliseconds: 400),
+                                            margin: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        2 -
+                                                    50),
+                                          ),
+                                        );
+                                        setState(() {
+                                          yumeBonusNoteController.clear();
+                                          yumeBonus = 0;
+                                        });
+                                      },
+                                      child: const Text(
+                                        "Bonus",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
                                   ],
                                 ),
                               ],

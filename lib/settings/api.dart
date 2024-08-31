@@ -28,6 +28,53 @@ class GoogleApiSettings {
 }
 
 class APIS {
+
+  //Bonus追加
+
+  static Future<void> addBonusToSheet(String whoseBonus, int amount, String note) async {
+    String url =
+        "https://script.google.com/macros/s/AKfycby5FiSmh6i0YBI1zN1JguPvD6sJb76vIcZGqGTPv_BZh0awvQR0wQoMXv3pxiaFew/exec";
+
+    debugPrint(whoseBonus);
+    debugPrint(note);
+
+    try {
+      final body = jsonEncode({
+        'amount': amount,
+        'category': whoseBonus,
+        'date': "",
+        'note': note,
+        'user': "",
+      });
+      debugPrint("Json Succeeded: $body");
+
+      http.Response response = await http.post(
+        Uri.parse(url),
+        body: body,
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      debugPrint('HTTP Status Code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseJson = jsonDecode(response.body);
+        debugPrint('Response Status: ${responseJson['status']}');
+      } else {
+        debugPrint('Error: ${response.statusCode} - ${response.reasonPhrase}');
+        debugPrint('Response body: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Request failed: $e');
+      rethrow;
+    }
+  }
+
+
+
+
   //Routine →  絵本  →家計簿
   static Future<void> addRoutineToSheet(String text,String doneCell) async {
     // final dateString =
@@ -39,7 +86,6 @@ class APIS {
     debugPrint(doneCell);
 
     try {
-      debugPrint("start submitting the form");
       final body = jsonEncode({
         'amount': text,
         'category': "routine",
