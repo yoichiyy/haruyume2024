@@ -28,6 +28,16 @@ class MonthlyBookCount {
     required this.yumeRFour,
     required this.haruGinko,
     required this.yumeGinko,
+    required this.mamaROne,
+    required this.mamaRTwo,
+    required this.mamaRThree,
+    required this.mamaRFour,
+    required this.papaROne,
+    required this.papaRTwo,
+    required this.papaRThree,
+    required this.papaRFour,
+    required this.mamaGinko,
+    required this.papaGinko,
   });
   final int monthlyHaruka;
   final int monthlyYumeko;
@@ -41,6 +51,16 @@ class MonthlyBookCount {
   final String yumeRFour;
   final int haruGinko;
   final int yumeGinko;
+  final String mamaROne;
+  final String mamaRTwo;
+  final String mamaRThree;
+  final String mamaRFour;
+  final String papaROne;
+  final String papaRTwo;
+  final String papaRThree;
+  final String papaRFour;
+  final int mamaGinko;
+  final int papaGinko;
 }
 
 class HomePageState extends State<HomePage> {
@@ -62,21 +82,45 @@ class HomePageState extends State<HomePage> {
   int yumeGinko = 0;
   int haruBonus = 0;
   int yumeBonus = 0;
+  String mamaROne = "";
+  String mamaRTwo = "";
+  String mamaRThree = "";
+  String mamaRFour = "";
+  String papaROne = "";
+  String papaRTwo = "";
+  String papaRThree = "";
+  String papaRFour = "";
+  int mamaGinko = 0;
+  int papaGinko = 0;
+  int mamaBonus = 0;
+  int papaBonus = 0;
 
-  final ValueNotifier<String> currentHaruOne = ValueNotifier<String>("");
-  final ValueNotifier<String> currentHaruTwo = ValueNotifier<String>("");
-  final ValueNotifier<String> currentHaruThree = ValueNotifier<String>("");
-  final ValueNotifier<String> currentHaruFour = ValueNotifier<String>("");
-  final ValueNotifier<String> currentYumeOne = ValueNotifier<String>("");
-  final ValueNotifier<String> currentYumeTwo = ValueNotifier<String>("");
-  final ValueNotifier<String> currentYumeThree = ValueNotifier<String>("");
-  final ValueNotifier<String> currentYumeFour = ValueNotifier<String>("");
+  late ValueNotifier<String> currentHaruOne;
+  late ValueNotifier<String> currentHaruTwo;
+  late ValueNotifier<String> currentHaruThree;
+  late ValueNotifier<String> currentHaruFour;
+  late ValueNotifier<String> currentYumeOne;
+  late ValueNotifier<String> currentYumeTwo;
+  late ValueNotifier<String> currentYumeThree;
+  late ValueNotifier<String> currentYumeFour;
+  late ValueNotifier<String> currentMamaOne;
+  late ValueNotifier<String> currentMamaTwo;
+  late ValueNotifier<String> currentMamaThree;
+  late ValueNotifier<String> currentMamaFour;
+  late ValueNotifier<String> currentPapaOne;
+  late ValueNotifier<String> currentPapaTwo;
+  late ValueNotifier<String> currentPapaThree;
+  late ValueNotifier<String> currentPapaFour;
 
   // 家計簿管理部分で使用される変数
   final kakeiController = TextEditingController();
   final kakeiNoteController = TextEditingController();
   final haruBonusNoteController = TextEditingController();
   final yumeBonusNoteController = TextEditingController();
+  final mamaBonusNoteController = TextEditingController();
+  final papaBonusNoteController = TextEditingController();
+
+  // final bool _isLoading = true; // データ取得中かどうかのフラグ
 
   void _checked(int index) {
     setState(() {
@@ -151,8 +195,44 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    currentHaruOne = ValueNotifier<String>("");
+    currentHaruTwo = ValueNotifier<String>("");
+    currentHaruThree = ValueNotifier<String>("");
+    currentHaruFour = ValueNotifier<String>("");
+    currentYumeOne = ValueNotifier<String>("");
+    currentYumeTwo = ValueNotifier<String>("");
+    currentYumeThree = ValueNotifier<String>("");
+    currentYumeFour = ValueNotifier<String>("");
+    currentMamaOne = ValueNotifier<String>("");
+    currentMamaTwo = ValueNotifier<String>("");
+    currentMamaThree = ValueNotifier<String>("");
+    currentMamaFour = ValueNotifier<String>("");
+    currentPapaOne = ValueNotifier<String>("");
+    currentPapaTwo = ValueNotifier<String>("");
+    currentPapaThree = ValueNotifier<String>("");
+    currentPapaFour = ValueNotifier<String>("");
+
+    //データ取得
     _fetchInitialData().then((initialData) {
       setState(() {
+        // データ取得後に ValueNotifier を更新
+        currentHaruOne.value = initialData.haruROne;
+        currentHaruTwo.value = initialData.haruRTwo;
+        currentHaruThree.value = initialData.haruRThree;
+        currentHaruFour.value = initialData.haruRFour;
+        currentYumeOne.value = initialData.yumeROne;
+        currentYumeTwo.value = initialData.yumeRTwo;
+        currentYumeThree.value = initialData.yumeRThree;
+        currentYumeFour.value = initialData.yumeRFour;
+        currentMamaOne.value = initialData.mamaROne;
+        currentMamaTwo.value = initialData.mamaRTwo;
+        currentMamaThree.value = initialData.mamaRThree;
+        currentMamaFour.value = initialData.mamaRFour;
+        currentPapaOne.value = initialData.papaROne;
+        currentPapaTwo.value = initialData.papaRTwo;
+        currentPapaThree.value = initialData.papaRThree;
+        currentPapaFour.value = initialData.papaRFour;
+
         monthlyHaruka = initialData.monthlyHaruka;
         monthlyYumeko = initialData.monthlyYumeko;
         haruROne = initialData.haruROne;
@@ -165,7 +245,20 @@ class HomePageState extends State<HomePage> {
         yumeRFour = initialData.yumeRFour;
         haruGinko = initialData.haruGinko;
         yumeGinko = initialData.yumeGinko;
+        mamaROne = initialData.mamaROne;
+        mamaRTwo = initialData.mamaRTwo;
+        mamaRThree = initialData.mamaRThree;
+        mamaRFour = initialData.mamaRFour;
+        papaROne = initialData.papaROne;
+        papaRTwo = initialData.papaRTwo;
+        papaRThree = initialData.papaRThree;
+        papaRFour = initialData.papaRFour;
+        mamaGinko = initialData.mamaGinko;
+        papaGinko = initialData.papaGinko;
       });
+    }).catchError((error) {
+      // エラーハンドリング
+      debugPrint('Error fetching initial data: $error');
     });
   }
 
@@ -179,6 +272,15 @@ class HomePageState extends State<HomePage> {
     currentYumeTwo.dispose();
     currentYumeThree.dispose();
     currentYumeFour.dispose();
+    currentMamaOne.dispose();
+    currentMamaTwo.dispose();
+    currentMamaThree.dispose();
+    currentMamaFour.dispose();
+    currentPapaOne.dispose();
+    currentPapaTwo.dispose();
+    currentPapaThree.dispose();
+    currentPapaFour.dispose();
+
     super.dispose();
   }
 
@@ -205,6 +307,16 @@ class HomePageState extends State<HomePage> {
       final yumeRFour = row3[13].toString();
       final haruGinko = int.tryParse(row3[14].toString()) ?? 0;
       final yumeGinko = int.tryParse(row3[16].toString()) ?? 0;
+      final mamaROne = row3[18].toString();
+      final mamaRTwo = row3[19].toString();
+      final mamaRThree = row3[20].toString();
+      final mamaRFour = row3[21].toString();
+      final papaROne = row3[22].toString();
+      final papaRTwo = row3[23].toString();
+      final papaRThree = row3[24].toString();
+      final papaRFour = row3[25].toString();
+      final mamaGinko = int.tryParse(row3[26].toString()) ?? 0;
+      final papaGinko = int.tryParse(row3[28].toString()) ?? 0;
 
       return MonthlyBookCount(
         monthlyHaruka: monthlyHaruka,
@@ -219,16 +331,29 @@ class HomePageState extends State<HomePage> {
         yumeRFour: yumeRFour,
         haruGinko: haruGinko,
         yumeGinko: yumeGinko,
+        mamaROne: mamaROne,
+        mamaRTwo: mamaRTwo,
+        mamaRThree: mamaRThree,
+        mamaRFour: mamaRFour,
+        papaROne: papaROne,
+        papaRTwo: papaRTwo,
+        papaRThree: papaRThree,
+        papaRFour: papaRFour,
+        mamaGinko: mamaGinko,
+        papaGinko: papaGinko,
       );
     } else {
       throw ('Invalid data format in B3 and C3 cells.');
     }
-    // } catch (e) {
-    //   debugPrint(e.toString()); // エラーはログに出力して握りつぶす
-    //   return MonthlyBookCount(monthlyHaruka: 0, monthlyYumeko: 0); // デフォルト値を返す
-    // }
   } //fetchInitData
 
+  Future<void> _addToSheetInBackground() async {
+    //家計簿用
+    await APIS.addKakeiboToSheet(
+        kakeiController.text, category, kakeiNoteController.text);
+  }
+
+  // Increment methods
   void _incrementHaruka() {
     setState(() {
       harukaCounter++;
@@ -243,12 +368,20 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _addToSheetInBackground() async {
-    await APIS.addKakeiboToSheet(
-        kakeiController.text, category, kakeiNoteController.text);
+  void _incrementMama() {
+    setState(() {
+      harukaCounter++;
+      monthlyHaruka++;
+    });
   }
 
-  // Increment methods
+  void _incrementPapa() {
+    setState(() {
+      yumekoCounter++;
+      monthlyYumeko++;
+    });
+  }
+
   void _incrementHaruGinko() {
     setState(() {
       haruGinko++;
@@ -261,15 +394,15 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  void _decrementHaruGinko() {
+  void _incrementMamaGinko() {
     setState(() {
-      haruGinko--;
+      mamaGinko++;
     });
   }
 
-  void _decrementYumeGinko() {
+  void _incrementPapaGinko() {
     setState(() {
-      yumeGinko--;
+      papaGinko++;
     });
   }
 
@@ -285,22 +418,32 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  void _incrementMamaBonus() {
+    setState(() {
+      haruBonus++;
+    });
+  }
+
+  void _incrementPapaBonus() {
+    setState(() {
+      yumeBonus++;
+    });
+  }
+
   // Helper method to cycle button text
-  String _cycleButtonText(String currentText, String originalText, cell) {
-    if (currentText == originalText) {
+  String _cycleButtonText(
+      String currentText, String originalText, String cell) {
+    if (currentText != "◯" && currentText != "／") {
       if (cell == 'F4' || cell == 'G4' || cell == 'H4' || cell == 'I4') {
-        _incrementYumeGinko();
-      } else {
         _incrementHaruGinko();
+      } else {
+        _incrementYumeGinko();
       }
       return "◯";
     } else if (currentText == "◯") {
-      if (cell == 'F4' || cell == 'G4' || cell == 'H4' || cell == 'I4') {
-        _decrementYumeGinko();
-      } else {
-        _decrementHaruGinko();
-      }
       return "／";
+    } else if (currentText == "／") {
+      return "☓";
     } else {
       return originalText;
     }
@@ -321,6 +464,7 @@ class HomePageState extends State<HomePage> {
               APIS.addRoutineToSheet(currentTextNotifier.value, cell);
             },
             style: ElevatedButton.styleFrom(
+              backgroundColor: currentText == "◯" ? Colors.pink[100] : null,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -503,10 +647,19 @@ class HomePageState extends State<HomePage> {
               ElevatedButton(
                 onPressed: () {
                   APIS.addBookToSheet(harukaCounter, yumekoCounter);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('おめでとうございます。'),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(milliseconds: 400),
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height / 2 - 50),
+                    ),
+                  );
                 },
                 child: const Text('送信'),
               ),
-              const SizedBox(height: 20), // 絵本カウント部分と家計簿管理部分の間のスペース
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -516,76 +669,42 @@ class HomePageState extends State<HomePage> {
                 },
                 child: const Text('リセット'),
               ),
-              const SizedBox(height: 20), // 絵本カウント部分と家計簿管理部分の間のスペース
+              const SizedBox(height: 20),
 
               //子ども銀行
               HomeCardWidgetKakei(
                   title: "子ども",
-                  color: const Color.fromARGB(255, 216, 207, 154),
+                  color: const Color(0xFF00C0FF),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            //左列　はるか銀行R
                             Column(
+                              //左列　はるか銀行R
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   'はるか  $haruGinko',
                                   style: const TextStyle(fontSize: 30),
                                 ),
                                 const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/osara_color.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentHaruOne, haruROne, "B4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/syufu_otetsudai.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentHaruTwo, haruRTwo, "C4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/shoes_kutsu_soroeru.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentHaruThree, haruRThree, "D4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/hamster_sleeping_golden.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentHaruFour, haruRFour, "E4"),
-                                  ],
-                                ),
-                                const SizedBox(height: 50),
+                                _buildRoutineButton(
+                                    currentHaruOne, haruROne, "B4"),
+                                const SizedBox(height: 27),
+                                _buildRoutineButton(
+                                    currentHaruTwo, haruRTwo, "C4"),
+                                const SizedBox(height: 27),
+                                _buildRoutineButton(
+                                    currentHaruThree, haruRThree, "D4"),
+                                const SizedBox(height: 27),
+                                _buildRoutineButton(
+                                    currentHaruFour, haruRFour, "E4"),
+                                const SizedBox(height: 60),
                                 Column(
                                   children: [
                                     Row(
@@ -681,66 +800,59 @@ class HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            // 右列夢子銀行 Column
                             Column(
+                              //中央列の絵
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 50),
+                                Image.asset(
+                                  'assets/osara_color.png',
+                                  width: 56,
+                                  height: 56,
+                                ),
+                                const SizedBox(height: 4),
+                                Image.asset(
+                                  'assets/syufu_otetsudai.png',
+                                  width: 56,
+                                  height: 56,
+                                ),
+                                const SizedBox(height: 4),
+                                Image.asset(
+                                  'assets/shoes_kutsu_soroeru.png',
+                                  width: 56,
+                                  height: 56,
+                                ),
+                                const SizedBox(height: 4),
+                                Image.asset(
+                                  'assets/hamster_sleeping_golden.png',
+                                  width: 56,
+                                  height: 56,
+                                ),
+                              ],
+                            ),
+                            Column(
+                              // 右列夢子銀行 Column
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'ゆめこ  $yumeGinko',
                                   style: const TextStyle(fontSize: 30),
                                 ),
                                 const SizedBox(height: 8),
-                                //ゆめRボタンリスト開始
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/osara_color.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentYumeOne, yumeROne, "F4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/syufu_otetsudai.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentYumeTwo, yumeRTwo, "G4"),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/shoes_kutsu_soroeru.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentYumeThree, yumeRThree, "H4"),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/kotowaza_neko_koban.png',
-                                      width: 56,
-                                      height: 56,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildRoutineButton(
-                                        currentYumeFour, yumeRFour, "I4"),
-                                  ],
-                                ),
-                                const SizedBox(height: 50),
+                                _buildRoutineButton(
+                                    currentYumeOne, yumeROne, "F4"),
+                                const SizedBox(height: 27),
+                                _buildRoutineButton(
+                                    currentYumeTwo, yumeRTwo, "G4"),
+                                const SizedBox(height: 27),
+                                _buildRoutineButton(
+                                    currentYumeThree, yumeRThree, "H4"),
+                                const SizedBox(height: 27),
+                                _buildRoutineButton(
+                                    currentYumeFour, yumeRFour, "I4"),
+                                const SizedBox(height: 60),
                                 Column(
                                   children: [
                                     Row(
@@ -842,6 +954,264 @@ class HomePageState extends State<HomePage> {
                     ], //Children
                   ) //Column
                   ), //card widget
+              //おとな
+              HomeCardWidgetKakei(
+                  title: "おとな",
+                  color: const Color.fromARGB(255, 216, 207, 154),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //左列まま銀行R
+                            Column(
+                              children: [
+                                Text(
+                                  'まま  $mamaGinko',
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    _buildRoutineButton(
+                                        currentMamaOne, mamaROne, "J4"),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    _buildRoutineButton(
+                                        currentMamaTwo, mamaRTwo, "K4"),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    _buildRoutineButton(
+                                        currentMamaThree, mamaRThree, "L4"),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    _buildRoutineButton(
+                                        currentMamaFour, mamaRFour, "M4"),
+                                  ],
+                                ),
+                                const SizedBox(height: 50),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _incrementMamaBonus();
+                                            },
+                                            child: Image.asset(
+                                              'assets/yumekawa_animal_unicorn.png',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          '$mamaBonus',
+                                          style: const TextStyle(fontSize: 30),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: TextFormField(
+                                        controller: mamaBonusNoteController,
+                                        decoration: const InputDecoration(
+                                            hintText: "note"),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                    MaterialButton(
+                                      color: Colors.lightBlue.shade900,
+                                      onPressed: () {
+                                        HapticFeedback.mediumImpact();
+                                        FocusScope.of(context).unfocus();
+                                        if (mamaBonusNoteController
+                                            .text.isEmpty) {
+                                          showDialog<AlertDialog>(
+                                            context: context,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                title: Text("Oops"),
+                                                content: Text("ちゃんと書きなさい"),
+                                              );
+                                            },
+                                          );
+                                          return;
+                                        } else {
+                                          APIS.addBonusToSheet(
+                                              "mamaBonus",
+                                              mamaBonus,
+                                              mamaBonusNoteController.text);
+                                        }
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: const Text('おめでとうございます。'),
+                                            behavior: SnackBarBehavior.floating,
+                                            duration: const Duration(
+                                                milliseconds: 400),
+                                            margin: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        2 -
+                                                    50),
+                                          ),
+                                        );
+                                        setState(() {
+                                          mamaBonusNoteController.clear();
+                                          mamaBonus = 0;
+                                        });
+                                      },
+                                      child: const Text(
+                                        "Bonus",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            // 右列papa銀行 Column
+                            Column(
+                              children: [
+                                Text(
+                                  'ぱぱ  $papaGinko',
+                                  style: const TextStyle(fontSize: 30),
+                                ),
+                                const SizedBox(height: 8),
+                                //ぱぱRボタンリスト開始
+                                _buildRoutineButton(
+                                    currentPapaOne, papaROne, "N4"),
+                                _buildRoutineButton(
+                                    currentPapaTwo, papaRTwo, "O4"),
+                                _buildRoutineButton(
+                                    currentPapaThree, papaRThree, "P4"),
+                                _buildRoutineButton(
+                                    currentPapaFour, papaRFour, "Q4"),
+                                const SizedBox(height: 50),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _incrementPapaBonus();
+                                            },
+                                            child: Image.asset(
+                                              'assets/animal_happa_tanuki.png',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          '$papaBonus',
+                                          style: const TextStyle(fontSize: 30),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: TextFormField(
+                                        controller: papaBonusNoteController,
+                                        decoration: const InputDecoration(
+                                            hintText: "note"),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                    MaterialButton(
+                                      color: Colors.lightBlue.shade900,
+                                      onPressed: () {
+                                        HapticFeedback.mediumImpact();
+                                        FocusScope.of(context).unfocus();
+                                        if (papaBonusNoteController
+                                            .text.isEmpty) {
+                                          showDialog<AlertDialog>(
+                                            context: context,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                title: Text("Oops"),
+                                                content: Text("ちゃんと書きなさい"),
+                                              );
+                                            },
+                                          );
+                                          return;
+                                        } else {
+                                          APIS.addBonusToSheet(
+                                              "papaBonus",
+                                              papaBonus,
+                                              papaBonusNoteController.text);
+                                        }
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: const Text('おめでとうございます。'),
+                                            behavior: SnackBarBehavior.floating,
+                                            duration: const Duration(
+                                                milliseconds: 400),
+                                            margin: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        2 -
+                                                    50),
+                                          ),
+                                        );
+                                        setState(() {
+                                          papaBonusNoteController.clear();
+                                          papaBonus = 0;
+                                        });
+                                      },
+                                      child: const Text(
+                                        "Bonus",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                      height: 10,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ], //おとなRボタン(children)
+                        ), //Row
+                      ), //Center
+                    ], //Children
+                  ) //Column
+                  ),
               // 家計簿
               HomeCardWidgetKakei(
                 title: "おこづかい",
@@ -989,7 +1359,7 @@ class HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-              ), //card widget
+              ) //card widget
             ],
           ),
         ), //SingleChildScrollView
