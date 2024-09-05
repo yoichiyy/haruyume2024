@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '613706397793',
     projectId: 'haruehon-c8837',
     storageBucket: 'haruehon-c8837.appspot.com',
-    iosBundleId: 'com.example.myapp',
+    iosBundleId: 'com.haruyumeehon.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '613706397793',
     projectId: 'haruehon-c8837',
     storageBucket: 'haruehon-c8837.appspot.com',
-    iosBundleId: 'com.example.myapp',
+    iosBundleId: 'com.haruyumeehon.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

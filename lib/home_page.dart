@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/home_card_kakei.dart';
-import 'package:myapp/settings/api.dart';
+import 'package:myapp/services/api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -489,6 +489,154 @@ class HomePageState extends State<HomePage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // 家計簿
+              HomeCardWidgetKakei(
+                title: "おこづかい",
+                color: Colors.green[100]!,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            controller: kakeiController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: const InputDecoration(hintText: "金額"),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                            height: 10,
+                          ),
+                          TextFormField(
+                            controller: kakeiNoteController,
+                            decoration: const InputDecoration(hintText: "メモ"),
+                          ),
+                          const SizedBox(
+                            width: double.infinity,
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: double.infinity,
+                      height: 20,
+                    ),
+                    GridView.builder(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 4,
+                        crossAxisSpacing: 8,
+                        childAspectRatio: 3,
+                      ),
+                      itemCount: 15,
+                      itemBuilder: (context, index) {
+                        final bool checked = checkedList.contains(index);
+                        return InkWell(
+                          child: checked == false
+                              ? Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black26),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    categoryList[index],
+                                    style: const TextStyle(
+                                        color: Colors.black45, fontSize: 12),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.yellow[200],
+                                    border: Border.all(),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    categoryIconList[index],
+                                    size: 20,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                          onTap: () {
+                            castId = index;
+                            if (checked) {
+                              _unchecked(index);
+                              category = "";
+                            } else {
+                              _checked(index);
+                              setState(() => category = categoryList[index]);
+                            }
+                          },
+                        );
+                      },
+                      shrinkWrap: true,
+                    ),
+                    const SizedBox(
+                      width: 60,
+                      height: 10,
+                    ),
+                    MaterialButton(
+                      color: Colors.lightBlue.shade900,
+                      minWidth: 120,
+                      height: 50,
+                      onPressed: () {
+                        HapticFeedback.mediumImpact();
+                        FocusScope.of(context).unfocus();
+                        if (kakeiController.text.isEmpty || category.isEmpty) {
+                          showDialog<AlertDialog>(
+                            context: context,
+                            builder: (context) {
+                              return const AlertDialog(
+                                title: Text("Oops"),
+                                content: Text("ちゃんと書きなさい"),
+                              );
+                            },
+                          );
+                          return;
+                        } else {
+                          _addToSheetInBackground();
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('おめでとうございます。'),
+                            behavior: SnackBarBehavior.floating,
+                            duration: const Duration(milliseconds: 400),
+                            margin: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.height / 2 -
+                                    50),
+                          ),
+                        );
+                        setState(() {
+                          kakeiController.clear();
+                          kakeiNoteController.clear();
+                          checkedList.clear();
+                        });
+                      },
+                      child: const Text(
+                        "  登録  ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ), //card widget
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1212,154 +1360,6 @@ class HomePageState extends State<HomePage> {
                     ], //Children
                   ) //Column
                   ),
-              // 家計簿
-              HomeCardWidgetKakei(
-                title: "おこづかい",
-                color: Colors.green[100]!,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            controller: kakeiController,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            decoration: const InputDecoration(hintText: "金額"),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: kakeiNoteController,
-                            decoration: const InputDecoration(hintText: "メモ"),
-                          ),
-                          const SizedBox(
-                            width: double.infinity,
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: double.infinity,
-                      height: 20,
-                    ),
-                    GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 4,
-                        crossAxisSpacing: 8,
-                        childAspectRatio: 3,
-                      ),
-                      itemCount: 15,
-                      itemBuilder: (context, index) {
-                        final bool checked = checkedList.contains(index);
-                        return InkWell(
-                          child: checked == false
-                              ? Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black26),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    categoryList[index],
-                                    style: const TextStyle(
-                                        color: Colors.black45, fontSize: 12),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              : Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.yellow[200],
-                                    border: Border.all(),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    categoryIconList[index],
-                                    size: 20,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                          onTap: () {
-                            castId = index;
-                            if (checked) {
-                              _unchecked(index);
-                              category = "";
-                            } else {
-                              _checked(index);
-                              setState(() => category = categoryList[index]);
-                            }
-                          },
-                        );
-                      },
-                      shrinkWrap: true,
-                    ),
-                    const SizedBox(
-                      width: 60,
-                      height: 10,
-                    ),
-                    MaterialButton(
-                      color: Colors.lightBlue.shade900,
-                      minWidth: 120,
-                      height: 50,
-                      onPressed: () {
-                        HapticFeedback.mediumImpact();
-                        FocusScope.of(context).unfocus();
-                        if (kakeiController.text.isEmpty || category.isEmpty) {
-                          showDialog<AlertDialog>(
-                            context: context,
-                            builder: (context) {
-                              return const AlertDialog(
-                                title: Text("Oops"),
-                                content: Text("ちゃんと書きなさい"),
-                              );
-                            },
-                          );
-                          return;
-                        } else {
-                          _addToSheetInBackground();
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('おめでとうございます。'),
-                            behavior: SnackBarBehavior.floating,
-                            duration: const Duration(milliseconds: 400),
-                            margin: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).size.height / 2 -
-                                    50),
-                          ),
-                        );
-                        setState(() {
-                          kakeiController.clear();
-                          kakeiNoteController.clear();
-                          checkedList.clear();
-                        });
-                      },
-                      child: const Text(
-                        "  登録  ",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                      height: 10,
-                    ),
-                  ],
-                ),
-              ) //card widget
             ],
           ),
         ), //SingleChildScrollView
