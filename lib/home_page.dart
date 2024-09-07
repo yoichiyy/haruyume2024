@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:myapp/home_card_kakei.dart';
-import 'package:myapp/models/monthly_book_count.dart';
+import 'package:myapp/models/home_page_state.dart';
 import 'package:myapp/services/api.dart';
+import 'package:myapp/widgets/home_card_child_bank.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,63 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int harukaCounter = 0;
-  int yumekoCounter = 0;
-  int totalHaruka = 0;
-  int totalYumeko = 0;
-  int monthlyHaruka = 0;
-  int monthlyYumeko = 0;
-  String haruROne = "";
-  String haruRTwo = "";
-  String haruRThree = "";
-  String haruRFour = "";
-  String yumeROne = "";
-  String yumeRTwo = "";
-  String yumeRThree = "";
-  String yumeRFour = "";
-  int haruGinko = 0;
-  int yumeGinko = 0;
-  int haruBonus = 0;
-  int yumeBonus = 0;
-  String mamaROne = "";
-  String mamaRTwo = "";
-  String mamaRThree = "";
-  String mamaRFour = "";
-  String papaROne = "";
-  String papaRTwo = "";
-  String papaRThree = "";
-  String papaRFour = "";
-  int mamaGinko = 0;
-  int papaGinko = 0;
-  int mamaBonus = 0;
-  int papaBonus = 0;
-
-  late ValueNotifier<String> currentHaruOne;
-  late ValueNotifier<String> currentHaruTwo;
-  late ValueNotifier<String> currentHaruThree;
-  late ValueNotifier<String> currentHaruFour;
-  late ValueNotifier<String> currentYumeOne;
-  late ValueNotifier<String> currentYumeTwo;
-  late ValueNotifier<String> currentYumeThree;
-  late ValueNotifier<String> currentYumeFour;
-  late ValueNotifier<String> currentMamaOne;
-  late ValueNotifier<String> currentMamaTwo;
-  late ValueNotifier<String> currentMamaThree;
-  late ValueNotifier<String> currentMamaFour;
-  late ValueNotifier<String> currentPapaOne;
-  late ValueNotifier<String> currentPapaTwo;
-  late ValueNotifier<String> currentPapaThree;
-  late ValueNotifier<String> currentPapaFour;
-
-  // 家計簿管理部分で使用される変数
-  final kakeiController = TextEditingController();
-  final kakeiNoteController = TextEditingController();
-  final haruBonusNoteController = TextEditingController();
-  final yumeBonusNoteController = TextEditingController();
-  final mamaBonusNoteController = TextEditingController();
-  final papaBonusNoteController = TextEditingController();
-
-  // final bool _isLoading = true; // データ取得中かどうかのフラグ
+  late HomePageStateData stateData;
 
   void _checked(int index) {
     setState(() {
@@ -147,66 +90,12 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    currentHaruOne = ValueNotifier<String>("");
-    currentHaruTwo = ValueNotifier<String>("");
-    currentHaruThree = ValueNotifier<String>("");
-    currentHaruFour = ValueNotifier<String>("");
-    currentYumeOne = ValueNotifier<String>("");
-    currentYumeTwo = ValueNotifier<String>("");
-    currentYumeThree = ValueNotifier<String>("");
-    currentYumeFour = ValueNotifier<String>("");
-    currentMamaOne = ValueNotifier<String>("");
-    currentMamaTwo = ValueNotifier<String>("");
-    currentMamaThree = ValueNotifier<String>("");
-    currentMamaFour = ValueNotifier<String>("");
-    currentPapaOne = ValueNotifier<String>("");
-    currentPapaTwo = ValueNotifier<String>("");
-    currentPapaThree = ValueNotifier<String>("");
-    currentPapaFour = ValueNotifier<String>("");
+    stateData = HomePageStateData();
 
     //データ取得
-    _fetchInitialData().then((initialData) {
+    fetchInitialData().then((initialData) {
       setState(() {
-        // データ取得後に ValueNotifier を更新
-        currentHaruOne.value = initialData.haruROne;
-        currentHaruTwo.value = initialData.haruRTwo;
-        currentHaruThree.value = initialData.haruRThree;
-        currentHaruFour.value = initialData.haruRFour;
-        currentYumeOne.value = initialData.yumeROne;
-        currentYumeTwo.value = initialData.yumeRTwo;
-        currentYumeThree.value = initialData.yumeRThree;
-        currentYumeFour.value = initialData.yumeRFour;
-        currentMamaOne.value = initialData.mamaROne;
-        currentMamaTwo.value = initialData.mamaRTwo;
-        currentMamaThree.value = initialData.mamaRThree;
-        currentMamaFour.value = initialData.mamaRFour;
-        currentPapaOne.value = initialData.papaROne;
-        currentPapaTwo.value = initialData.papaRTwo;
-        currentPapaThree.value = initialData.papaRThree;
-        currentPapaFour.value = initialData.papaRFour;
-
-        monthlyHaruka = initialData.monthlyHaruka;
-        monthlyYumeko = initialData.monthlyYumeko;
-        haruROne = initialData.haruROne;
-        haruRTwo = initialData.haruRTwo;
-        haruRThree = initialData.haruRThree;
-        haruRFour = initialData.haruRFour;
-        yumeROne = initialData.yumeROne;
-        yumeRTwo = initialData.yumeRTwo;
-        yumeRThree = initialData.yumeRThree;
-        yumeRFour = initialData.yumeRFour;
-        haruGinko = initialData.haruGinko;
-        yumeGinko = initialData.yumeGinko;
-        mamaROne = initialData.mamaROne;
-        mamaRTwo = initialData.mamaRTwo;
-        mamaRThree = initialData.mamaRThree;
-        mamaRFour = initialData.mamaRFour;
-        papaROne = initialData.papaROne;
-        papaRTwo = initialData.papaRTwo;
-        papaRThree = initialData.papaRThree;
-        papaRFour = initialData.papaRFour;
-        mamaGinko = initialData.mamaGinko;
-        papaGinko = initialData.papaGinko;
+        stateData.updateData(initialData);
       });
     }).catchError((error) {
       // エラーハンドリング
@@ -216,216 +105,91 @@ class HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    currentHaruOne.dispose();
-    currentHaruTwo.dispose();
-    currentHaruThree.dispose();
-    currentHaruFour.dispose();
-    currentYumeOne.dispose();
-    currentYumeTwo.dispose();
-    currentYumeThree.dispose();
-    currentYumeFour.dispose();
-    currentMamaOne.dispose();
-    currentMamaTwo.dispose();
-    currentMamaThree.dispose();
-    currentMamaFour.dispose();
-    currentPapaOne.dispose();
-    currentPapaTwo.dispose();
-    currentPapaThree.dispose();
-    currentPapaFour.dispose();
-
+    stateData.dispose();
     super.dispose();
   }
 
-  //スプレッドシートからデータを取得
-  static Future<MonthlyBookCount> _fetchInitialData() async {
-    // try {
-    final url = GoogleApiSettings.getGoogleBookSheet();
-    final res = await http.get(Uri.parse(url));
-    //中身のチェック
-    final Map<String, dynamic> cellValues = json.decode(res.body);
-    final List<dynamic> row3 = cellValues['values'][2];
-    // debugPrint("■■■${row3.toString()}");
-
-    if (row3.length >= 2) {
-      final monthlyHaruka = int.tryParse(row3[1].toString()) ?? 0;
-      final monthlyYumeko = int.tryParse(row3[2].toString()) ?? 0;
-      final haruROne = row3[6].toString();
-      final haruRTwo = row3[7].toString();
-      final haruRThree = row3[8].toString();
-      final haruRFour = row3[9].toString();
-      final yumeROne = row3[10].toString();
-      final yumeRTwo = row3[11].toString();
-      final yumeRThree = row3[12].toString();
-      final yumeRFour = row3[13].toString();
-      final haruGinko = int.tryParse(row3[14].toString()) ?? 0;
-      final yumeGinko = int.tryParse(row3[16].toString()) ?? 0;
-      final mamaROne = row3[18].toString();
-      final mamaRTwo = row3[19].toString();
-      final mamaRThree = row3[20].toString();
-      final mamaRFour = row3[21].toString();
-      final papaROne = row3[22].toString();
-      final papaRTwo = row3[23].toString();
-      final papaRThree = row3[24].toString();
-      final papaRFour = row3[25].toString();
-      final mamaGinko = int.tryParse(row3[26].toString()) ?? 0;
-      final papaGinko = int.tryParse(row3[28].toString()) ?? 0;
-
-      return MonthlyBookCount(
-        monthlyHaruka: monthlyHaruka,
-        monthlyYumeko: monthlyYumeko,
-        haruROne: haruROne,
-        haruRTwo: haruRTwo,
-        haruRThree: haruRThree,
-        haruRFour: haruRFour,
-        yumeROne: yumeROne,
-        yumeRTwo: yumeRTwo,
-        yumeRThree: yumeRThree,
-        yumeRFour: yumeRFour,
-        haruGinko: haruGinko,
-        yumeGinko: yumeGinko,
-        mamaROne: mamaROne,
-        mamaRTwo: mamaRTwo,
-        mamaRThree: mamaRThree,
-        mamaRFour: mamaRFour,
-        papaROne: papaROne,
-        papaRTwo: papaRTwo,
-        papaRThree: papaRThree,
-        papaRFour: papaRFour,
-        mamaGinko: mamaGinko,
-        papaGinko: papaGinko,
-      );
-    } else {
-      throw ('Invalid data format in B3 and C3 cells.');
-    }
-  } //fetchInitData
-
   Future<void> _addToSheetInBackground() async {
     //家計簿用
-    await APIS.addKakeiboToSheet(
-        kakeiController.text, category, kakeiNoteController.text);
+    await APIS.addKakeiboToSheet(stateData.kakeiController.text, category,
+        stateData.kakeiNoteController.text);
   }
 
   // Increment methods
   void _incrementHaruka() {
     setState(() {
-      harukaCounter++;
-      monthlyHaruka++;
+      stateData.harukaCounter++;
+      stateData.monthlyHaruka++;
     });
   }
 
   void _incrementYumeko() {
     setState(() {
-      yumekoCounter++;
-      monthlyYumeko++;
+      stateData.yumekoCounter++;
+      stateData.monthlyYumeko++;
     });
   }
 
   void _incrementMama() {
     setState(() {
-      harukaCounter++;
-      monthlyHaruka++;
+      stateData.harukaCounter++;
+      stateData.monthlyHaruka++;
     });
   }
 
   void _incrementPapa() {
     setState(() {
-      yumekoCounter++;
-      monthlyYumeko++;
+      stateData.yumekoCounter++;
+      stateData.monthlyYumeko++;
     });
   }
 
   void _incrementHaruGinko() {
     setState(() {
-      haruGinko++;
+      stateData.haruGinko++;
     });
   }
 
   void _incrementYumeGinko() {
     setState(() {
-      yumeGinko++;
+      stateData.yumeGinko++;
     });
   }
 
   void _incrementMamaGinko() {
     setState(() {
-      mamaGinko++;
+      stateData.mamaGinko++;
     });
   }
 
   void _incrementPapaGinko() {
     setState(() {
-      papaGinko++;
+      stateData.papaGinko++;
     });
   }
 
   void _incrementHaruBonus() {
     setState(() {
-      haruBonus++;
+      stateData.haruBonus++;
     });
   }
 
   void _incrementYumeBonus() {
     setState(() {
-      yumeBonus++;
+      stateData.yumeBonus++;
     });
   }
 
   void _incrementMamaBonus() {
     setState(() {
-      haruBonus++;
+      stateData.haruBonus++;
     });
   }
 
   void _incrementPapaBonus() {
     setState(() {
-      yumeBonus++;
+      stateData.yumeBonus++;
     });
-  }
-
-  // Helper method to cycle button text
-  String _cycleButtonText(
-      String currentText, String originalText, String cell) {
-    if (currentText != "◯" && currentText != "／") {
-      if (cell == 'F4' || cell == 'G4' || cell == 'H4' || cell == 'I4') {
-        _incrementHaruGinko();
-      } else {
-        _incrementYumeGinko();
-      }
-      return "◯";
-    } else if (currentText == "◯") {
-      return "／";
-    } else if (currentText == "／") {
-      return "☓";
-    } else {
-      return originalText;
-    }
-  }
-
-  // Helper widget for Haru buttons
-  Widget _buildRoutineButton(
-      ValueNotifier<String> currentTextNotifier, String originalText, cell) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
-      child: ValueListenableBuilder<String>(
-        valueListenable: currentTextNotifier,
-        builder: (context, currentText, _) {
-          return ElevatedButton(
-            onPressed: () {
-              currentTextNotifier.value =
-                  _cycleButtonText(currentText, originalText, cell);
-              APIS.addRoutineToSheet(currentTextNotifier.value, cell);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: currentText == "◯" ? Colors.pink[100] : null,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-            child: Text(currentText),
-          );
-        },
-      ),
-    );
   }
 
   //描画部分
@@ -442,7 +206,7 @@ class HomePageState extends State<HomePage> {
           child: Column(
             children: [
               // 家計簿
-              HomeCardWidgetKakei(
+              HomeCardWidget(
                 title: "おこづかい",
                 color: Colors.green[100]!,
                 child: Column(
@@ -453,7 +217,7 @@ class HomePageState extends State<HomePage> {
                         children: [
                           TextFormField(
                             keyboardType: TextInputType.number,
-                            controller: kakeiController,
+                            controller: stateData.kakeiController,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
@@ -464,7 +228,7 @@ class HomePageState extends State<HomePage> {
                             height: 10,
                           ),
                           TextFormField(
-                            controller: kakeiNoteController,
+                            controller: stateData.kakeiNoteController,
                             decoration: const InputDecoration(hintText: "メモ"),
                           ),
                           const SizedBox(
@@ -543,7 +307,8 @@ class HomePageState extends State<HomePage> {
                       onPressed: () {
                         HapticFeedback.mediumImpact();
                         FocusScope.of(context).unfocus();
-                        if (kakeiController.text.isEmpty || category.isEmpty) {
+                        if (stateData.kakeiController.text.isEmpty ||
+                            category.isEmpty) {
                           showDialog<AlertDialog>(
                             context: context,
                             builder: (context) {
@@ -568,8 +333,8 @@ class HomePageState extends State<HomePage> {
                           ),
                         );
                         setState(() {
-                          kakeiController.clear();
-                          kakeiNoteController.clear();
+                          stateData.kakeiController.clear();
+                          stateData.kakeiNoteController.clear();
                           checkedList.clear();
                         });
                       },
@@ -650,7 +415,8 @@ class HomePageState extends State<HomePage> {
                               text: '今月: ', // この部分はデフォルトのスタイルを適用
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '$monthlyHaruka', // この部分だけフォントサイズ20に変更
+                                  text:
+                                      '$stateData.monthlyHaruka', // この部分だけフォントサイズ20に変更
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -661,7 +427,8 @@ class HomePageState extends State<HomePage> {
                               text: 'カウンター: ', // この部分はデフォルトのスタイルを適用
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '$harukaCounter', // この部分だけフォントサイズ20に変更
+                                  text:
+                                      '$stateData.harukaCounter', // この部分だけフォントサイズ20に変更
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -721,7 +488,8 @@ class HomePageState extends State<HomePage> {
                               text: '今月: ', // この部分はデフォルトのスタイルを適用
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '$monthlyYumeko', // この部分だけフォントサイズ20に変更
+                                  text:
+                                      '$stateData.monthlyYumeko', // この部分だけフォントサイズ20に変更
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -732,7 +500,8 @@ class HomePageState extends State<HomePage> {
                               text: 'カウンター: ', // この部分はデフォルトのスタイルを適用
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '$yumekoCounter', // この部分だけフォントサイズ20に変更
+                                  text:
+                                      '$stateData.yumekoCounter', // この部分だけフォントサイズ20に変更
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -746,7 +515,8 @@ class HomePageState extends State<HomePage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  APIS.addBookToSheet(harukaCounter, yumekoCounter);
+                  APIS.addBookToSheet(
+                      stateData.harukaCounter, stateData.yumekoCounter);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('おめでとうございます。'),
@@ -763,555 +533,47 @@ class HomePageState extends State<HomePage> {
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    harukaCounter = 0;
-                    yumekoCounter = 0;
+                    stateData.harukaCounter = 0;
+                    stateData.yumekoCounter = 0;
                   });
                 },
                 child: const Text('リセット'),
               ),
               const SizedBox(height: 20),
-
               //子ども銀行
-              HomeCardWidgetKakei(
-                  title: "子ども",
-                  color: const Color(0xFF00C0FF),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              //左列　はるか銀行R
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'はるか  $haruGinko',
-                                  style: const TextStyle(fontSize: 30),
-                                ),
-                                const SizedBox(height: 8),
-                                _buildRoutineButton(
-                                    currentHaruOne, haruROne, "B4"),
-                                const SizedBox(height: 27),
-                                _buildRoutineButton(
-                                    currentHaruTwo, haruRTwo, "C4"),
-                                const SizedBox(height: 27),
-                                _buildRoutineButton(
-                                    currentHaruThree, haruRThree, "D4"),
-                                const SizedBox(height: 27),
-                                _buildRoutineButton(
-                                    currentHaruFour, haruRFour, "E4"),
-                                const SizedBox(height: 60),
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _incrementHaruBonus();
-                                            },
-                                            child: Image.asset(
-                                              'assets/yumekawa_animal_unicorn.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '$haruBonus',
-                                          style: const TextStyle(fontSize: 30),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 200,
-                                      child: TextFormField(
-                                        controller: haruBonusNoteController,
-                                        decoration: const InputDecoration(
-                                            hintText: "note"),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                    MaterialButton(
-                                      color: Colors.lightBlue.shade900,
-                                      onPressed: () {
-                                        HapticFeedback.mediumImpact();
-                                        FocusScope.of(context).unfocus();
-                                        if (haruBonusNoteController
-                                            .text.isEmpty) {
-                                          showDialog<AlertDialog>(
-                                            context: context,
-                                            builder: (context) {
-                                              return const AlertDialog(
-                                                title: Text("Oops"),
-                                                content: Text("ちゃんと書きなさい"),
-                                              );
-                                            },
-                                          );
-                                          return;
-                                        } else {
-                                          APIS.addBonusToSheet(
-                                              "haruBonus",
-                                              haruBonus,
-                                              haruBonusNoteController.text);
-                                        }
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: const Text('おめでとうございます。'),
-                                            behavior: SnackBarBehavior.floating,
-                                            duration: const Duration(
-                                                milliseconds: 400),
-                                            margin: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        2 -
-                                                    50),
-                                          ),
-                                        );
-                                        setState(() {
-                                          haruBonusNoteController.clear();
-                                          haruBonus = 0;
-                                        });
-                                      },
-                                      child: const Text(
-                                        "Bonus",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Column(
-                              //中央列の絵
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 50),
-                                Image.asset(
-                                  'assets/osara_color.png',
-                                  width: 56,
-                                  height: 56,
-                                ),
-                                const SizedBox(height: 4),
-                                Image.asset(
-                                  'assets/syufu_otetsudai.png',
-                                  width: 56,
-                                  height: 56,
-                                ),
-                                const SizedBox(height: 4),
-                                Image.asset(
-                                  'assets/shoes_kutsu_soroeru.png',
-                                  width: 56,
-                                  height: 56,
-                                ),
-                                const SizedBox(height: 4),
-                                Image.asset(
-                                  'assets/hamster_sleeping_golden.png',
-                                  width: 56,
-                                  height: 56,
-                                ),
-                              ],
-                            ),
-                            Column(
-                              // 右列夢子銀行 Column
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'ゆめこ  $yumeGinko',
-                                  style: const TextStyle(fontSize: 30),
-                                ),
-                                const SizedBox(height: 8),
-                                _buildRoutineButton(
-                                    currentYumeOne, yumeROne, "F4"),
-                                const SizedBox(height: 27),
-                                _buildRoutineButton(
-                                    currentYumeTwo, yumeRTwo, "G4"),
-                                const SizedBox(height: 27),
-                                _buildRoutineButton(
-                                    currentYumeThree, yumeRThree, "H4"),
-                                const SizedBox(height: 27),
-                                _buildRoutineButton(
-                                    currentYumeFour, yumeRFour, "I4"),
-                                const SizedBox(height: 60),
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _incrementYumeBonus();
-                                            },
-                                            child: Image.asset(
-                                              'assets/animal_happa_tanuki.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '$yumeBonus',
-                                          style: const TextStyle(fontSize: 30),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 200,
-                                      child: TextFormField(
-                                        controller: yumeBonusNoteController,
-                                        decoration: const InputDecoration(
-                                            hintText: "note"),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                    MaterialButton(
-                                      color: Colors.lightBlue.shade900,
-                                      onPressed: () {
-                                        HapticFeedback.mediumImpact();
-                                        FocusScope.of(context).unfocus();
-                                        if (yumeBonusNoteController
-                                            .text.isEmpty) {
-                                          showDialog<AlertDialog>(
-                                            context: context,
-                                            builder: (context) {
-                                              return const AlertDialog(
-                                                title: Text("Oops"),
-                                                content: Text("ちゃんと書きなさい"),
-                                              );
-                                            },
-                                          );
-                                          return;
-                                        } else {
-                                          APIS.addBonusToSheet(
-                                              "yumeBonus",
-                                              yumeBonus,
-                                              yumeBonusNoteController.text);
-                                        }
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: const Text('おめでとうございます。'),
-                                            behavior: SnackBarBehavior.floating,
-                                            duration: const Duration(
-                                                milliseconds: 400),
-                                            margin: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        2 -
-                                                    50),
-                                          ),
-                                        );
-                                        setState(() {
-                                          yumeBonusNoteController.clear();
-                                          yumeBonus = 0;
-                                        });
-                                      },
-                                      child: const Text(
-                                        "Bonus",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ], //ゆめはるRボタン(children)
-                        ), //Row
-                      ), //Center
-                    ], //Children
-                  ) //Column
-                  ), //card widget
+              HomeCardWidget(
+                title: "子ども",
+                color: const Color(0xFF00C0FF),
+                child: HomeCardChildBank(
+                  stateData: stateData,
+                  onIncrementHaruBonus: _incrementHaruBonus,
+                  onIncrementYumeBonus: _incrementYumeBonus,
+                  onIncrementHaruGinko: _incrementHaruGinko,
+                  onIncrementYumeGinko: _incrementYumeGinko,
+                  onIncrementMamaBonus: _incrementMamaBonus,
+                  onIncrementPapaBonus: _incrementPapaBonus,
+                  onIncrementMamaGinko: _incrementMamaGinko,
+                  onIncrementPapaGinko: _incrementPapaGinko,
+                  isAdult: false,
+                ),
+              ),
               //おとな
-              HomeCardWidgetKakei(
-                  title: "おとな",
-                  color: const Color.fromARGB(255, 216, 207, 154),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            //左列まま銀行R
-                            Column(
-                              children: [
-                                Text(
-                                  'まま  $mamaGinko',
-                                  style: const TextStyle(fontSize: 30),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    _buildRoutineButton(
-                                        currentMamaOne, mamaROne, "J4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    _buildRoutineButton(
-                                        currentMamaTwo, mamaRTwo, "K4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    _buildRoutineButton(
-                                        currentMamaThree, mamaRThree, "L4"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    _buildRoutineButton(
-                                        currentMamaFour, mamaRFour, "M4"),
-                                  ],
-                                ),
-                                const SizedBox(height: 50),
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _incrementMamaBonus();
-                                            },
-                                            child: Image.asset(
-                                              'assets/yumekawa_animal_unicorn.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '$mamaBonus',
-                                          style: const TextStyle(fontSize: 30),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 200,
-                                      child: TextFormField(
-                                        controller: mamaBonusNoteController,
-                                        decoration: const InputDecoration(
-                                            hintText: "note"),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                    MaterialButton(
-                                      color: Colors.lightBlue.shade900,
-                                      onPressed: () {
-                                        HapticFeedback.mediumImpact();
-                                        FocusScope.of(context).unfocus();
-                                        if (mamaBonusNoteController
-                                            .text.isEmpty) {
-                                          showDialog<AlertDialog>(
-                                            context: context,
-                                            builder: (context) {
-                                              return const AlertDialog(
-                                                title: Text("Oops"),
-                                                content: Text("ちゃんと書きなさい"),
-                                              );
-                                            },
-                                          );
-                                          return;
-                                        } else {
-                                          APIS.addBonusToSheet(
-                                              "mamaBonus",
-                                              mamaBonus,
-                                              mamaBonusNoteController.text);
-                                        }
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: const Text('おめでとうございます。'),
-                                            behavior: SnackBarBehavior.floating,
-                                            duration: const Duration(
-                                                milliseconds: 400),
-                                            margin: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        2 -
-                                                    50),
-                                          ),
-                                        );
-                                        setState(() {
-                                          mamaBonusNoteController.clear();
-                                          mamaBonus = 0;
-                                        });
-                                      },
-                                      child: const Text(
-                                        "Bonus",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            // 右列papa銀行 Column
-                            Column(
-                              children: [
-                                Text(
-                                  'ぱぱ  $papaGinko',
-                                  style: const TextStyle(fontSize: 30),
-                                ),
-                                const SizedBox(height: 8),
-                                //ぱぱRボタンリスト開始
-                                _buildRoutineButton(
-                                    currentPapaOne, papaROne, "N4"),
-                                _buildRoutineButton(
-                                    currentPapaTwo, papaRTwo, "O4"),
-                                _buildRoutineButton(
-                                    currentPapaThree, papaRThree, "P4"),
-                                _buildRoutineButton(
-                                    currentPapaFour, papaRFour, "Q4"),
-                                const SizedBox(height: 50),
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _incrementPapaBonus();
-                                            },
-                                            child: Image.asset(
-                                              'assets/animal_happa_tanuki.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          '$papaBonus',
-                                          style: const TextStyle(fontSize: 30),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 200,
-                                      child: TextFormField(
-                                        controller: papaBonusNoteController,
-                                        decoration: const InputDecoration(
-                                            hintText: "note"),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                    MaterialButton(
-                                      color: Colors.lightBlue.shade900,
-                                      onPressed: () {
-                                        HapticFeedback.mediumImpact();
-                                        FocusScope.of(context).unfocus();
-                                        if (papaBonusNoteController
-                                            .text.isEmpty) {
-                                          showDialog<AlertDialog>(
-                                            context: context,
-                                            builder: (context) {
-                                              return const AlertDialog(
-                                                title: Text("Oops"),
-                                                content: Text("ちゃんと書きなさい"),
-                                              );
-                                            },
-                                          );
-                                          return;
-                                        } else {
-                                          APIS.addBonusToSheet(
-                                              "papaBonus",
-                                              papaBonus,
-                                              papaBonusNoteController.text);
-                                        }
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: const Text('おめでとうございます。'),
-                                            behavior: SnackBarBehavior.floating,
-                                            duration: const Duration(
-                                                milliseconds: 400),
-                                            margin: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        2 -
-                                                    50),
-                                          ),
-                                        );
-                                        setState(() {
-                                          papaBonusNoteController.clear();
-                                          papaBonus = 0;
-                                        });
-                                      },
-                                      child: const Text(
-                                        "Bonus",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ], //おとなRボタン(children)
-                        ), //Row
-                      ), //Center
-                    ], //Children
-                  ) //Column
-                  ),
+              HomeCardWidget(
+                title: "おとな",
+                color: const Color.fromARGB(255, 216, 207, 154),
+                child: HomeCardChildBank(
+                  stateData: stateData,
+                  onIncrementHaruBonus: _incrementHaruBonus,
+                  onIncrementYumeBonus: _incrementYumeBonus,
+                  onIncrementHaruGinko: _incrementHaruGinko,
+                  onIncrementYumeGinko: _incrementYumeGinko,
+                  onIncrementMamaBonus: _incrementMamaBonus,
+                  onIncrementPapaBonus: _incrementPapaBonus,
+                  onIncrementMamaGinko: _incrementMamaGinko,
+                  onIncrementPapaGinko: _incrementPapaGinko,
+                  isAdult: true,
+                ),
+              ),
             ],
           ),
         ), //SingleChildScrollView

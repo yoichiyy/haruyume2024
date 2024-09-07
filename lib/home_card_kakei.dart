@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomeCardWidgetKakei extends StatelessWidget {
-  const HomeCardWidgetKakei(
+class HomeCardWidget extends StatelessWidget {
+  const HomeCardWidget(
       {super.key,
       required this.color,
       required this.title,
