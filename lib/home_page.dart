@@ -1,12 +1,12 @@
-import 'dart:math';
-
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:myapp/home_card_kakei.dart';
 import 'package:myapp/models/home_page_state.dart';
 import 'package:myapp/services/api.dart';
+import 'package:myapp/settings/confetti.dart';
+import 'package:myapp/widgets/emotion_classifier_screen.dart';
 import 'package:myapp/widgets/home_card_child_bank.dart';
+import 'package:myapp/widgets/home_card_kakei.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -106,6 +106,8 @@ class HomePageState extends State<HomePage> {
   @override
   void dispose() {
     stateData.dispose();
+    _controllerHaru.dispose();
+    _controllerYume.dispose();
     super.dispose();
   }
 
@@ -124,20 +126,6 @@ class HomePageState extends State<HomePage> {
   }
 
   void _incrementYumeko() {
-    setState(() {
-      stateData.yumekoCounter++;
-      stateData.monthlyYumeko++;
-    });
-  }
-
-  void _incrementMama() {
-    setState(() {
-      stateData.harukaCounter++;
-      stateData.monthlyHaruka++;
-    });
-  }
-
-  void _incrementPapa() {
     setState(() {
       stateData.yumekoCounter++;
       stateData.monthlyYumeko++;
@@ -354,22 +342,17 @@ class HomePageState extends State<HomePage> {
                   ],
                 ),
               ), //card widget
+              const SizedBox(
+                width: 10,
+                height: 40,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //晴加ボタン
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Row(
-                      // children: [
-                      // SizedBox(
-                      //   width: 60,
-                      //   height: 60,
-                      //   child: Image.asset(
-                      //     'assets/yumekawa_animal_unicorn.png',
-                      //     fit: BoxFit.cover,
-                      //   ),
-                      // ),
                       SizedBox(
                         width: 60,
                         height: 60,
@@ -382,28 +365,9 @@ class HomePageState extends State<HomePage> {
                           },
                         ),
                       ),
-                      // ],
-                      // ),
-                      ConfettiWidget(
-                        confettiController: _controllerHaru,
-                        blastDirectionality: BlastDirectionality.explosive,
-                        blastDirection: pi / 2,
-                        // 紙吹雪を出す方向(この場合画面上に向けて発射)
-                        emissionFrequency: 0.9, // 発射頻度(数が小さいほど紙と紙の間隔が狭くなる)
-                        minBlastForce: 5, // 紙吹雪の出る瞬間の5フレーム分の速度の最小
-                        maxBlastForce:
-                            10, // 紙吹雪の出る瞬間の5フレーム分の速度の最大(数が大きほど紙吹雪は遠くに飛んでいきます。)
-                        numberOfParticles: 7, // 1秒あたりの紙の枚数
-                        gravity: 0.5, // 紙の落ちる速さ(0~1で0だとちょーゆっくり)
-                        colors: const <Color>[
-                          // 紙吹雪の色指定
-                          Colors.red,
-                          Colors.blue,
-                          //最初Colorsでなく、Constants、となっていた。
-                          Colors.green,
-                        ],
+                      CustomConfettiWidget(
+                        controller: _controllerHaru,
                       ),
-                      //ボタン下スペース
                       const SizedBox(
                         width: 20,
                         height: 20,
@@ -412,11 +376,10 @@ class HomePageState extends State<HomePage> {
                         children: [
                           Text.rich(
                             TextSpan(
-                              text: '今月: ', // この部分はデフォルトのスタイルを適用
+                              text: '今月: ',
                               children: <TextSpan>[
                                 TextSpan(
-                                  text:
-                                      '$stateData.monthlyHaruka', // この部分だけフォントサイズ20に変更
+                                  text: '${stateData.monthlyHaruka}',
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -424,11 +387,10 @@ class HomePageState extends State<HomePage> {
                           ),
                           Text.rich(
                             TextSpan(
-                              text: 'カウンター: ', // この部分はデフォルトのスタイルを適用
+                              text: 'カウンター: ',
                               children: <TextSpan>[
                                 TextSpan(
-                                  text:
-                                      '$stateData.harukaCounter', // この部分だけフォントサイズ20に変更
+                                  text: '${stateData.harukaCounter}',
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -441,6 +403,7 @@ class HomePageState extends State<HomePage> {
                   const SizedBox(width: 50),
                   //夢子ボタン
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
                         width: 60,
@@ -455,28 +418,9 @@ class HomePageState extends State<HomePage> {
                           },
                         ),
                       ),
-                      // ],
-                      // ),
-                      ConfettiWidget(
-                        confettiController: _controllerYume,
-                        blastDirectionality: BlastDirectionality.explosive,
-                        blastDirection: pi / 2,
-                        // 紙吹雪を出す方向(この場合画面上に向けて発射)
-                        emissionFrequency: 0.9, // 発射頻度(数が小さいほど紙と紙の間隔が狭くなる)
-                        minBlastForce: 5, // 紙吹雪の出る瞬間の5フレーム分の速度の最小
-                        maxBlastForce:
-                            10, // 紙吹雪の出る瞬間の5フレーム分の速度の最大(数が大きほど紙吹雪は遠くに飛んでいきます。)
-                        numberOfParticles: 7, // 1秒あたりの紙の枚数
-                        gravity: 0.5, // 紙の落ちる速さ(0~1で0だとちょーゆっくり)
-                        colors: const <Color>[
-                          // 紙吹雪の色指定
-                          Colors.red,
-                          Colors.blue,
-                          //最初Colorsでなく、Constants、となっていた。
-                          Colors.green,
-                        ],
+                      CustomConfettiWidget(
+                        controller: _controllerYume,
                       ),
-                      //ボタン下スペース
                       const SizedBox(
                         width: 20,
                         height: 20,
@@ -489,7 +433,7 @@ class HomePageState extends State<HomePage> {
                               children: <TextSpan>[
                                 TextSpan(
                                   text:
-                                      '$stateData.monthlyYumeko', // この部分だけフォントサイズ20に変更
+                                      '${stateData.monthlyYumeko}', // この部分だけフォントサイズ20に変更
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -501,7 +445,7 @@ class HomePageState extends State<HomePage> {
                               children: <TextSpan>[
                                 TextSpan(
                                   text:
-                                      '$stateData.yumekoCounter', // この部分だけフォントサイズ20に変更
+                                      '${stateData.yumekoCounter}', // この部分だけフォントサイズ20に変更
                                   style: const TextStyle(fontSize: 30),
                                 ),
                               ],
@@ -539,6 +483,8 @@ class HomePageState extends State<HomePage> {
                 },
                 child: const Text('リセット'),
               ),
+              const SizedBox(height: 20),
+              EmotionClassifierScreen(),
               const SizedBox(height: 20),
               //子ども銀行
               HomeCardWidget(

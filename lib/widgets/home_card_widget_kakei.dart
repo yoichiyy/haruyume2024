@@ -7,11 +7,11 @@ class HomeCardWidgetKakei extends StatelessWidget {
   final Widget child;
 
   const HomeCardWidgetKakei({
-    Key? key,
+    super.key,
     required this.title,
     required this.color,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

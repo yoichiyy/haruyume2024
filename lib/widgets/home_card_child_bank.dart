@@ -227,9 +227,9 @@ class HomeCardChildBank extends StatelessWidget {
       String currentText, String originalText, String cell) {
     if (currentText != "◯" && currentText != "／") {
       if (cell == 'F4' || cell == 'G4' || cell == 'H4' || cell == 'I4') {
-        onIncrementHaruGinko!();
+        onIncrementHaruGinko();
       } else {
-        onIncrementYumeGinko!();
+        onIncrementYumeGinko();
       }
       return "◯";
     } else if (currentText == "◯") {
