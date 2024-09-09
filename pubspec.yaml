@@ -25,6 +25,7 @@ dependencies:
   shared_preferences: ^2.3.2
   confetti: ^0.7.0
   speech_to_text: ^6.6.2
+  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:
