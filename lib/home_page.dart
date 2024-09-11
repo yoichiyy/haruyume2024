@@ -484,8 +484,6 @@ class HomePageState extends State<HomePage> {
                 child: const Text('リセット'),
               ),
               const SizedBox(height: 20),
-              EmotionClassifierScreen(),
-              const SizedBox(height: 20),
               //子ども銀行
               HomeCardWidget(
                 title: "子ども",
@@ -503,23 +501,26 @@ class HomePageState extends State<HomePage> {
                   isAdult: false,
                 ),
               ),
+              const SizedBox(height: 20),
+              const EmotionClassifierScreen(),
+
               //おとな
-              HomeCardWidget(
-                title: "おとな",
-                color: const Color.fromARGB(255, 216, 207, 154),
-                child: HomeCardChildBank(
-                  stateData: stateData,
-                  onIncrementHaruBonus: _incrementHaruBonus,
-                  onIncrementYumeBonus: _incrementYumeBonus,
-                  onIncrementHaruGinko: _incrementHaruGinko,
-                  onIncrementYumeGinko: _incrementYumeGinko,
-                  onIncrementMamaBonus: _incrementMamaBonus,
-                  onIncrementPapaBonus: _incrementPapaBonus,
-                  onIncrementMamaGinko: _incrementMamaGinko,
-                  onIncrementPapaGinko: _incrementPapaGinko,
-                  isAdult: true,
-                ),
-              ),
+              // HomeCardWidget(
+              //   title: "おとな",
+              //   color: const Color.fromARGB(255, 216, 207, 154),
+              //   child: HomeCardChildBank(
+              //     stateData: stateData,
+              //     onIncrementHaruBonus: _incrementHaruBonus,
+              //     onIncrementYumeBonus: _incrementYumeBonus,
+              //     onIncrementHaruGinko: _incrementHaruGinko,
+              //     onIncrementYumeGinko: _incrementYumeGinko,
+              //     onIncrementMamaBonus: _incrementMamaBonus,
+              //     onIncrementPapaBonus: _incrementPapaBonus,
+              //     onIncrementMamaGinko: _incrementMamaGinko,
+              //     onIncrementPapaGinko: _incrementPapaGinko,
+              //     isAdult: true,
+              //   ),
+              // ),
             ],
           ),
         ), //SingleChildScrollView

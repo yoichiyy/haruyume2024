@@ -15,25 +15,27 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
   final TextEditingController _textController = TextEditingController();
   final stt.SpeechToText _speechToText = stt.SpeechToText();
   bool _isListening = false;
+  String _classificationResult = ""; // 感情分類結果を表示
 
-  // Hugging Face APIを呼び出す関数
-  Future<void> sendToHuggingFace(String inputText) async {
-    const String apiUrl =
-        "https://api-inference.huggingface.co/models/your-model-name"; // Hugging FaceのモデルURL
-    const String apiKey = "your-api-key"; // APIキーを設定
+  // Flask APIを呼び出す関数
+  Future<void> sendToFlask(String inputText) async {
+    const String apiUrl = "http://192.168.11.36:5000/analyze"; // FlaskのURL
+    // const String apiUrl =  "https://flask-v9rl.onrender.com/analyze"; // FlaskのURL
 
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
-        'Authorization': 'Bearer $apiKey',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({"inputs": inputText}),
+      body: jsonEncode({"text": inputText}), // テキストを送信
     );
 
     if (response.statusCode == 200) {
       var result = jsonDecode(response.body);
-      debugPrint("感情分類結果: $result");
+      setState(() {
+        _classificationResult = result['classification']; // 結果を保存
+      });
+      debugPrint("感情分類結果: $_classificationResult");
     } else {
       debugPrint("APIエラー: ${response.statusCode}");
     }
@@ -63,7 +65,7 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const SizedBox(height: 20), // 上のウィジェットとのスペース（20px）
+          const SizedBox(height: 20),
           Stack(
             alignment: Alignment.centerRight,
             children: [
@@ -85,12 +87,17 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20), // テキストエリアとボタンの間のスペース
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              sendToHuggingFace(_textController.text); // 送信ボタン押下時にAPIを呼び出す
+              sendToFlask(_textController.text); // 送信ボタン押下時にAPIを呼び出す
             },
             child: const Text('送信'),
+          ),
+          const SizedBox(height: 20), // 結果表示のためのスペース
+          Text(
+            '感情分類結果: $_classificationResult',
+            style: const TextStyle(fontSize: 18),
           ),
         ],
       ),
