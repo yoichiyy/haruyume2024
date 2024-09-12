@@ -19,8 +19,8 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
 
   // Flask APIを呼び出す関数
   Future<void> sendToFlask(String inputText) async {
-    const String apiUrl = "http://192.168.11.36:5000/analyze"; // FlaskのURL
-    // const String apiUrl =  "https://flask-v9rl.onrender.com/analyze"; // FlaskのURL
+    // const String apiUrl = "http://127.0.0.1:5000/analyze"; // FlaskのURL
+    const String apiUrl =  "https://flask-v9rl.onrender.com/analyze"; // FlaskのURL
 
     final response = await http.post(
       Uri.parse(apiUrl),
