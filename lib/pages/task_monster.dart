@@ -40,7 +40,7 @@ class _TaskMonsterState extends State<TaskMonster> {
 
   Future<void> _playSound() async {
     try {
-      await _audioPlayer!.setSource(AssetSource('sword.mp3'));
+      await _audioPlayer!.setSource(AssetSource('assets/sword.mp3'));
       await _audioPlayer!.setVolume(1.0);
       await _audioPlayer!.resume();
       HapticFeedback.mediumImpact(); // バイブレーション
@@ -75,7 +75,7 @@ class _TaskMonsterState extends State<TaskMonster> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child: Image.asset('images/shoggoth.png'),
+                      child: Image.asset('assets/shoggoth.png'),
                     ),
                   ],
                 ),

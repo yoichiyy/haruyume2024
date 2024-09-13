@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'package:myapp/main_page.dart';
+
 import 'settings/firebase_options.dart';
 
 void main() async {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'はるゆめAPP',
-      home: HomePage(), // ログインを省略し、直接HomePageを表示
+      home: MainPage(),
     );
   }
 }
