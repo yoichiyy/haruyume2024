@@ -35,7 +35,7 @@ class MainPageState extends State<MainPage> {
           children: [
             // ナビゲーションバー
             Container(
-              height: 30.0, // ナビゲーションバーの高さ
+              height: 60.0, // ナビゲーションバーの高さ
               // margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               // padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               decoration: BoxDecoration(
@@ -66,7 +66,7 @@ class MainPageState extends State<MainPage> {
                     icon: Image.asset(
                       'assets/shoggoth.png',
                       width: 36,
-                      height: 29,
+                      height: 48,
                       color: _currentIndex == 1 ? Colors.blue : Colors.grey,
                     ),
                     onPressed: () => _onMenuTap(1),
