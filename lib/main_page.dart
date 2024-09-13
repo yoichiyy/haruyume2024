@@ -63,8 +63,10 @@ class MainPageState extends State<MainPage> {
                   ),
                   // TaskMonsterへのボタン
                   IconButton(
-                    icon: Icon(
-                      Icons.task,
+                    icon: Image.asset(
+                      'assets/shoggoth.png',
+                      width: 36,
+                      height: 29,
                       color: _currentIndex == 1 ? Colors.blue : Colors.grey,
                     ),
                     onPressed: () => _onMenuTap(1),
