@@ -5,7 +5,6 @@ import 'package:myapp/models/home_page_state.dart';
 import 'package:myapp/services/api.dart';
 import 'package:myapp/settings/confetti.dart';
 import 'package:myapp/widgets/emotion_classifier_screen.dart';
-import 'package:myapp/widgets/home_card_child_bank.dart';
 import 'package:myapp/widgets/home_card_kakei.dart';
 
 class HomePage extends StatefulWidget {
@@ -185,8 +184,8 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('はるゆめ絵本'),
-      ),
+          // title: const Text('はるゆめ絵本'),
+          ),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         behavior: HitTestBehavior.opaque,
@@ -485,22 +484,22 @@ class HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               //子ども銀行
-              HomeCardWidget(
-                title: "子ども",
-                color: const Color(0xFF00C0FF),
-                child: HomeCardChildBank(
-                  stateData: stateData,
-                  onIncrementHaruBonus: _incrementHaruBonus,
-                  onIncrementYumeBonus: _incrementYumeBonus,
-                  onIncrementHaruGinko: _incrementHaruGinko,
-                  onIncrementYumeGinko: _incrementYumeGinko,
-                  onIncrementMamaBonus: _incrementMamaBonus,
-                  onIncrementPapaBonus: _incrementPapaBonus,
-                  onIncrementMamaGinko: _incrementMamaGinko,
-                  onIncrementPapaGinko: _incrementPapaGinko,
-                  isAdult: false,
-                ),
-              ),
+              // HomeCardWidget(
+              //   title: "子ども",
+              //   color: const Color(0xFF00C0FF),
+              //   child: HomeCardChildBank(
+              //     stateData: stateData,
+              //     onIncrementHaruBonus: _incrementHaruBonus,
+              //     onIncrementYumeBonus: _incrementYumeBonus,
+              //     onIncrementHaruGinko: _incrementHaruGinko,
+              //     onIncrementYumeGinko: _incrementYumeGinko,
+              //     onIncrementMamaBonus: _incrementMamaBonus,
+              //     onIncrementPapaBonus: _incrementPapaBonus,
+              //     onIncrementMamaGinko: _incrementMamaGinko,
+              //     onIncrementPapaGinko: _incrementPapaGinko,
+              //     isAdult: false,
+              //   ),
+              // ),
               const SizedBox(height: 20),
               const EmotionClassifierScreen(),
 
