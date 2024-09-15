@@ -19,9 +19,8 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
 
   // Flask APIを呼び出す関数
   Future<void> sendToFlask(String inputText) async {
-    // const String apiUrl = "http://127.0.0.1:5000/analyze"; // FlaskのURL
-    const String apiUrl =
-        "https://flask-v9rl.onrender.com/analyze"; // FlaskのURL
+    // const String apiUrl = "http://127.0.0.1:5000/analyze"; // ローカル
+    const String apiUrl = "https://flask-v9rl.onrender.com/analyze"; // FlasK
 
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -34,7 +33,7 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
     if (response.statusCode == 200) {
       var result = jsonDecode(response.body);
       setState(() {
-        _classificationResult = result['classification']; // 結果を保存
+        _classificationResult = result['analysis']; // 結果を保存
       });
       debugPrint("感情分類結果: $_classificationResult");
     } else {
@@ -96,10 +95,23 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
             child: const Text('送信'),
           ),
           const SizedBox(height: 20), // 結果表示のためのスペース
-          Text(
-            '感情分類結果: $_classificationResult',
-            style: const TextStyle(fontSize: 18),
-          ),
+          Container(
+            padding: const EdgeInsets.all(10.0), // 枠線内の余白
+            margin:
+                const EdgeInsets.symmetric(horizontal: 10.0), // 左右の余白（1cm相当）
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black, width: 2.0), // 黒い枠線
+              borderRadius: BorderRadius.circular(5.0), // 角を少し丸める
+            ),
+            constraints: const BoxConstraints(
+              maxWidth: double.infinity, // 画面横いっぱい
+            ),
+            child: Text(
+              '感情分類結果: $_classificationResult',
+              style: const TextStyle(fontSize: 18),
+              textAlign: TextAlign.left, // テキストを左揃えに
+            ),
+          )
         ],
       ),
     );
