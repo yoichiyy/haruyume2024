@@ -92,7 +92,7 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
             onPressed: () {
               sendToFlask(_textController.text); // 送信ボタン押下時にAPIを呼び出す
             },
-            child: const Text('送信'),
+            child: const Text('そうしん'),
           ),
           const SizedBox(height: 20), // 結果表示のためのスペース
           Container(
