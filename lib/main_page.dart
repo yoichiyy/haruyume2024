@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/pages/report.dart';
 import 'package:myapp/pages/task_monster.dart';
 
 import 'home_page.dart';
@@ -17,6 +18,7 @@ class MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const HomePage(),
     const TaskMonster(),
+    const StructuredReportPage(userId:'papa'),
   ];
 
   // ページを切り替える関数
@@ -52,7 +54,6 @@ class MainPageState extends State<MainPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // HomePageへのボタン
                   IconButton(
                     icon: Icon(
                       Icons.home,
@@ -61,7 +62,6 @@ class MainPageState extends State<MainPage> {
                     onPressed: () => _onMenuTap(0),
                     tooltip: 'Home',
                   ),
-                  // TaskMonsterへのボタン
                   IconButton(
                     icon: Image.asset(
                       'assets/shoggoth.png',
@@ -72,6 +72,17 @@ class MainPageState extends State<MainPage> {
                     onPressed: () => _onMenuTap(1),
                     tooltip: 'おばけ',
                   ),
+                                    IconButton(
+                    icon: Image.asset(
+                      'assets/hamster_sleeping_golden.png',
+                      width: 36,
+                      height: 48,
+                      color: _currentIndex == 1 ? Colors.blue : Colors.grey,
+                    ),
+                    onPressed: () => _onMenuTap(2),
+                    tooltip: 'レポート',
+                  ),
+
                 ],
               ),
             ),
