@@ -15,6 +15,7 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
   String _classificationResult = ""; // 感情分類結果を表示
   String _selectedUser = "mama";
   bool _isButtonPressed = false;
+  final FocusNode _focusNode = FocusNode();
 
   // ボタンを押した際に呼ばれる関数
   void _handleSubmit() {
@@ -123,9 +124,12 @@ class EmotionClassifierScreenState extends State<EmotionClassifierScreen> {
               Flexible(
                 child: TextField(
                   controller: _textController,
-                  minLines: 1, // 初期の高さ
-                  // maxLines: null, // maxLinesをnullに設定して無制限に拡大
-                  expands: false, // これでTextFieldの高さが動的に伸びる
+                  minLines: null, // 初期の高さ
+                  maxLines: null, // maxLinesをnullに設定して無制限に拡大
+                  // expands: true,
+                  scrollPhysics: const BouncingScrollPhysics(),
+                  focusNode: _focusNode,
+                  textInputAction: TextInputAction.newline,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: "今頭の中にあることを書く。\n余裕があれば【問題 →（希望/理想＆感情）←行動】を書く",
