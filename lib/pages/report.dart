@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class StructuredReportPage extends StatefulWidget {
   final String userId;
@@ -19,7 +19,8 @@ class StructuredReportPageState extends State<StructuredReportPage> {
 
   // レポート作成リクエスト
   Future<void> generateStructuredReport() async {
-    final url = Uri.parse('http://your-backend-url/generate_structured_report');
+    final url =
+        Uri.parse('https://flask-v9rl.onrender.com/generate_structured_report');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -59,10 +60,13 @@ class StructuredReportPageState extends State<StructuredReportPage> {
                     child: ListView(
                       children: [
                         const Text("感情:"),
-                        pieChart != null ? Image.memory(pieChart!) : const Text("感情円グラフがありません"),
+                        pieChart != null
+                            ? Image.memory(pieChart!)
+                            : const Text("感情円グラフがありません"),
                         const SizedBox(height: 20),
                         const Text("重要な出来事:"),
-                        ...report!['important_events'].map<Widget>((e) => Text(e)),
+                        ...report!['important_events']
+                            .map<Widget>((e) => Text(e)),
                         const SizedBox(height: 20),
                         const Text("Good:"),
                         ...report!['good_things'].map<Widget>((e) => Text(e)),
