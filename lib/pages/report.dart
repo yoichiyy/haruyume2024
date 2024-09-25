@@ -21,11 +21,19 @@ class StructuredReportPageState extends State<StructuredReportPage> {
   Future<void> generateStructuredReport() async {
     final url =
         Uri.parse('https://flask-v9rl.onrender.com/generate_structured_report');
+
+//debug1
+    debugPrint('Sending request to $url');
+
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'user_id': widget.userId}),
     );
+
+    // ステータスコードを確認
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

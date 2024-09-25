@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 // StatefulWidgetとして定義
 class CustomConfettiWidget extends StatefulWidget {
@@ -37,7 +38,7 @@ class CustomConfettiWidgetState extends State<CustomConfettiWidget> {
 
   @override
   void dispose() {
-    widget.controller.dispose();  // コントローラーのクリーンアップ
+    // widget.controller.dispose();
     super.dispose();
   }
 }
