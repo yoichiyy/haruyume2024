@@ -9,7 +9,11 @@
             "request": "launch",
             "name": "localhost に対して Chrome を起動する",
             "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            // "url": "http://localhost:${port}",
+            "webRoot": "${workspaceFolder}",
+            // "osx": {
+            // "runtimeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+            // },
         }
     ]
 }
