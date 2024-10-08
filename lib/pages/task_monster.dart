@@ -1,14 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:counter/ui/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io'; // Required for File operations
-import 'dart:html' as html; // For web-specific functionality (only for web)
-import 'package:gallery_saver/gallery_saver.dart'; // Required for saving to gallery
-
 
 class TaskMonster extends StatefulWidget {
   const TaskMonster({super.key});
@@ -82,56 +77,22 @@ class _TaskMonsterState extends State<TaskMonster> {
     }
 
     try {
-      String videoPath;
-    // Check if the app is running on the web or mobile platforms
-    if (kIsWeb) {
-      // Handle web-specific functionality (no real file system access)
-      videoPath =
-          'web_video_path'; // Placeholder, web cannot save files like mobile
-      debugPrint('Running on the web - saving video is not supported.');
-
-      // Simulate video recording for the web (Blob URL handling)
-      await _cameraController!.startVideoRecording();
-      setState(() {
-        _isRecording = true;
-      });
-
-      // Stop the video recording and get the video file (blob URL)
-      XFile videoFile = await _cameraController!.stopVideoRecording();
-      final videoUrl = videoFile.path; // This is the Blob URL in web
-      debugPrint('Video saved to $videoUrl');
-
-      // Create a download link in the browser to save the video
-      html.AnchorElement(href: videoUrl)
-        ..setAttribute('download', 'video.mp4') // Set the file name for download
-        ..click(); // Simulate a click to download the file
-
-    } else {
-      // For Android/iOS
       final directory = await getApplicationDocumentsDirectory();
-      videoPath = '${directory.path}/video_${DateTime.now()}.mp4';
+      String videoPath = '${directory.path}/video_${DateTime.now()}.mp4';
 
-      // Start recording video
       await _cameraController!.startVideoRecording();
       setState(() {
         _isRecording = true;
       });
 
-      debugPrint('Video recording started and will be saved to: $videoPath');
-
-      // To stop recording:
-      XFile videoFile = await _cameraController!.stopVideoRecording(); // Stop the recording
-      videoPath = videoFile.path; // The recorded video file path
+      XFile videoFile = await _cameraController!.stopVideoRecording();
+      videoPath = videoFile.path;
       debugPrint('Video saved to $videoPath');
-
-      // Optionally save the video to the gallery (iOS/Android)
-      await GallerySaver.saveVideo(videoPath);
-      debugPrint('Video saved to the gallery.');
+    } catch (e) {
+      debugPrint("ERROR: $e");
     }
-  } catch (e) {
-    debugPrint("ERROR: $e");
   }
-}
+
   Future<void> _stopRecording() async {
     if (_cameraController == null ||
         !_cameraController!.value.isRecordingVideo) {
@@ -188,7 +149,7 @@ class _TaskMonsterState extends State<TaskMonster> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (_cameraController != null &&
+              if (_isCameraInitialized &&
                   _cameraController!.value.isInitialized)
                 AspectRatio(
                   aspectRatio: _cameraController!.value.aspectRatio,
